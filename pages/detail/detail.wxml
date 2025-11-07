@@ -1,0 +1,297 @@
+<!--pages/detail/detail.wxml-->
+<view class="container">
+  <!-- 类型选择（仅新增时显示） -->
+  <view class="type-selector" wx:if="{{!isEdit}}">
+    <view 
+      class="type-option {{beanType === 'pourOver' ? 'active' : ''}}"
+      bindtap="selectType"
+      data-type="pourOver"
+    >
+      手冲豆
+    </view>
+    <view 
+      class="type-option {{beanType === 'espresso' ? 'active' : ''}}"
+      bindtap="selectType"
+      data-type="espresso"
+    >
+      意式豆
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="section">
+    <view class="section-title">基本信息</view>
+    
+    <view class="input-group">
+      <text class="input-label">豆名 *</text>
+      <input 
+        class="input-field" 
+        placeholder="如：Kenya AA"
+        value="{{name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">品牌</text>
+      <input 
+        class="input-field" 
+        placeholder="如：Manner"
+        value="{{brand}}"
+        bindinput="onBrandInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">烘焙度</text>
+      <picker 
+        mode="selector" 
+        range="{{roastLevels}}"
+        value="{{roastLevelIndex}}"
+        bindchange="onRoastLevelChange"
+      >
+        <view class="picker-field">
+          {{roastLevel || '请选择烘焙度'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">产地</text>
+      <input 
+        class="input-field" 
+        placeholder="如：埃塞俄比亚"
+        value="{{origin}}"
+        bindinput="onOriginInput"
+      />
+    </view>
+  </view>
+
+  <!-- 手冲模板 -->
+  <view class="section" wx:if="{{beanType === 'pourOver'}}">
+    <view class="section-title">冲煮参数</view>
+    
+    <view class="input-group">
+      <text class="input-label">粉量 (g)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：15"
+        value="{{pourOverParams.coffeeWeight}}"
+        bindinput="onPourOverCoffeeWeightInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">水量 (ml)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：225"
+        value="{{pourOverParams.waterWeight}}"
+        bindinput="onPourOverWaterWeightInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">温度 (°C)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：92"
+        value="{{pourOverParams.temperature}}"
+        bindinput="onPourOverTemperatureInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">时间 (s)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：180"
+        value="{{pourOverParams.time}}"
+        bindinput="onPourOverTimeInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">研磨度</text>
+      <input 
+        class="input-field" 
+        placeholder="如：中细"
+        value="{{pourOverParams.grindSize}}"
+        bindinput="onPourOverGrindSizeInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">风味描述</text>
+      <view class="tags">
+        <view 
+          class="tag" 
+          wx:for="{{flavors}}" 
+          wx:key="*this"
+          wx:for-item="flavor"
+        >
+          {{flavor}}
+          <text class="tag-remove" catchtap="removeFlavor" data-flavor="{{flavor}}">×</text>
+        </view>
+      </view>
+      <input 
+        class="input-field" 
+        placeholder="输入风味标签，回车添加"
+        value="{{flavorInput}}"
+        bindinput="onFlavorInput"
+        bindconfirm="addFlavor"
+      />
+    </view>
+  </view>
+
+  <!-- 意式模板 -->
+  <view class="section" wx:if="{{beanType === 'espresso'}}">
+    <view class="section-title">萃取参数</view>
+    
+    <view class="input-group">
+      <text class="input-label">粉量 (g)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：18"
+        value="{{espressoParams.coffeeWeight}}"
+        bindinput="onEspressoCoffeeWeightInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">出品量 (g)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：36"
+        value="{{espressoParams.outputWeight}}"
+        bindinput="onEspressoOutputWeightInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">时间 (s)</text>
+      <input 
+        class="input-field" 
+        type="digit"
+        placeholder="如：25"
+        value="{{espressoParams.time}}"
+        bindinput="onEspressoTimeInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">研磨度</text>
+      <input 
+        class="input-field" 
+        placeholder="如：细"
+        value="{{espressoParams.grindSize}}"
+        bindinput="onEspressoGrindSizeInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">风味评分</text>
+      <view class="score-item">
+        <text class="score-label">苦味：</text>
+        <view class="score-stars">
+          <text 
+            class="star {{flavorScores.bitterness >= i ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}"
+            wx:key="*this"
+            wx:for-item="i"
+            bindtap="setFlavorScore"
+            data-key="bitterness"
+            data-value="{{i}}"
+          >★</text>
+        </view>
+      </view>
+      <view class="score-item">
+        <text class="score-label">酸度：</text>
+        <view class="score-stars">
+          <text 
+            class="star {{flavorScores.acidity >= i ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}"
+            wx:key="*this"
+            wx:for-item="i"
+            bindtap="setFlavorScore"
+            data-key="acidity"
+            data-value="{{i}}"
+          >★</text>
+        </view>
+      </view>
+      <view class="score-item">
+        <text class="score-label">平衡感：</text>
+        <view class="score-stars">
+          <text 
+            class="star {{flavorScores.balance >= i ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}"
+            wx:key="*this"
+            wx:for-item="i"
+            bindtap="setFlavorScore"
+            data-key="balance"
+            data-value="{{i}}"
+          >★</text>
+        </view>
+      </view>
+      <view class="score-item">
+        <text class="score-label">口感厚度：</text>
+        <view class="score-stars">
+          <text 
+            class="star {{flavorScores.body >= i ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}"
+            wx:key="*this"
+            wx:for-item="i"
+            bindtap="setFlavorScore"
+            data-key="body"
+            data-value="{{i}}"
+          >★</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注和评分 -->
+  <view class="section">
+    <view class="input-group">
+      <text class="input-label">备注</text>
+      <textarea 
+        class="textarea-field" 
+        placeholder="记录你的感受..."
+        value="{{notes}}"
+        bindinput="onNotesInput"
+        maxlength="500"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="input-label">综合评分</text>
+      <view class="rating-container">
+        <view class="rating-stars">
+          <text 
+            class="star {{rating >= i ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}"
+            wx:key="*this"
+            wx:for-item="i"
+            bindtap="setRating"
+            data-rating="{{i}}"
+          >★</text>
+        </view>
+        <text class="rating-text">{{rating || 0}}分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-btn-container">
+    <button class="btn-primary save-btn" bindtap="saveRecord">
+      {{isEdit ? '保存修改' : '保存记录'}}
+    </button>
+  </view>
+</view>
+

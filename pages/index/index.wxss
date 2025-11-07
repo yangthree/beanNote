@@ -1,0 +1,178 @@
+/* pages/index/index.wxss */
+.container {
+  padding: 20rpx;
+  min-height: 100vh;
+  padding-bottom: 120rpx; /* 为FAB按钮留出空间 */
+}
+
+/* 搜索框 */
+.search-container {
+  margin-bottom: 20rpx;
+}
+
+.search-input {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #E0E0E0;
+}
+
+.search-input:focus {
+  border-color: #8B4513;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 20rpx;
+  margin-top: 200rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999999;
+  margin-bottom: 10rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: #CCCCCC;
+}
+
+/* 咖啡豆列表 */
+.bean-list {
+  padding-bottom: 40rpx;
+}
+
+.bean-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.bean-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.bean-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  flex: 1;
+}
+
+.bean-info {
+  margin-bottom: 20rpx;
+}
+
+.info-item {
+  margin-bottom: 10rpx;
+  font-size: 28rpx;
+}
+
+.info-label {
+  color: #666666;
+}
+
+.info-value {
+  color: #333333;
+}
+
+.bean-rating {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.rating-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 4rpx;
+}
+
+.star {
+  font-size: 28rpx;
+  color: #D3D3D3;
+}
+
+.star.active {
+  color: #FFD700;
+}
+
+.rating-value {
+  font-size: 24rpx;
+  color: #8B4513;
+  font-weight: bold;
+}
+
+.bean-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.bean-date {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.action-btn {
+  padding: 10rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+
+.delete-btn {
+  background-color: #FF6B6B;
+  color: #ffffff;
+}
+
+.delete-btn:active {
+  background-color: #FF5252;
+}
+
+/* 悬浮添加按钮 */
+.fab {
+  position: fixed;
+  right: 30rpx;
+  bottom: 120rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #8B4513;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(139, 69, 19, 0.3);
+  z-index: 100;
+}
+
+.fab-icon {
+  font-size: 50rpx;
+  color: #ffffff;
+}
+
+.fab:active {
+  background-color: #6B3410;
+}
+

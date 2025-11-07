@@ -1,0 +1,74 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search-container">
+    <input 
+      class="search-input" 
+      placeholder="搜索豆名、品牌、产地或风味..." 
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+    />
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{showEmpty}}">
+    <text class="empty-text">还没有咖啡豆记录</text>
+    <text class="empty-hint">点击下方"添加记录"开始记录吧~</text>
+  </view>
+
+  <!-- 咖啡豆列表 -->
+  <view class="bean-list" wx:else>
+    <view 
+      class="bean-card" 
+      wx:for="{{coffeeBeans}}" 
+      wx:key="id"
+      bindtap="goToDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="bean-header">
+        <view class="bean-name">{{item.name || '未命名咖啡豆'}}</view>
+        <view class="type-tag {{item.type === 'pourOver' ? 'pour-over' : 'espresso'}}">
+          {{item.type === 'pourOver' ? '手冲' : '意式'}}
+        </view>
+      </view>
+
+      <view class="bean-info">
+        <view class="info-item" wx:if="{{item.brand}}">
+          <text class="info-label">品牌：</text>
+          <text class="info-value">{{item.brand}}</text>
+        </view>
+        <view class="info-item" wx:if="{{item.origin}}">
+          <text class="info-label">产地：</text>
+          <text class="info-value">{{item.origin}}</text>
+        </view>
+        <view class="info-item" wx:if="{{item.roastLevel}}">
+          <text class="info-label">烘焙度：</text>
+          <text class="info-value">{{item.roastLevel}}</text>
+        </view>
+      </view>
+
+      <view class="bean-rating">
+        <text class="rating-text">评分：</text>
+        <view class="rating-stars">
+          <text class="star {{item.rating >= 1 ? 'active' : ''}}">★</text>
+          <text class="star {{item.rating >= 2 ? 'active' : ''}}">★</text>
+          <text class="star {{item.rating >= 3 ? 'active' : ''}}">★</text>
+          <text class="star {{item.rating >= 4 ? 'active' : ''}}">★</text>
+          <text class="star {{item.rating >= 5 ? 'active' : ''}}">★</text>
+        </view>
+        <text class="rating-value">{{item.rating || 0}}分</text>
+      </view>
+
+      <view class="bean-footer">
+        <text class="bean-date">{{item.createdAt ? item.createdAt.split('T')[0] : ''}}</text>
+        <view class="action-btn delete-btn" catchtap="deleteBean" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="goToAdd">
+    <text class="fab-icon">➕</text>
+  </view>
+</view>
+

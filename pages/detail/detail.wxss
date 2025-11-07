@@ -1,0 +1,203 @@
+/* pages/detail/detail.wxss */
+.container {
+  padding: 20rpx;
+  padding-bottom: 120rpx;
+}
+
+/* 类型选择器 */
+.type-selector {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.type-option {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  border: 2rpx solid #E0E0E0;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.type-option.active {
+  background-color: #8B4513;
+  color: #ffffff;
+  border-color: #8B4513;
+}
+
+/* 区块样式 */
+.section {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+/* 输入组 */
+.input-group {
+  margin-bottom: 30rpx;
+}
+
+.input-label {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.input-field {
+  width: 100%;
+  padding: 20rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: #8B4513;
+}
+
+.picker-field {
+  width: 100%;
+  padding: 20rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  color: #333333;
+}
+
+.textarea-field {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 20rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.textarea-field:focus {
+  border-color: #8B4513;
+}
+
+/* 标签 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 10rpx;
+}
+
+.tag {
+  background-color: #F0E68C;
+  color: #8B4513;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.tag-remove {
+  font-size: 28rpx;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 评分项 */
+.score-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.score-label {
+  font-size: 28rpx;
+  color: #666666;
+  width: 160rpx;
+}
+
+.score-stars {
+  display: flex;
+  gap: 10rpx;
+}
+
+.score-stars .star {
+  font-size: 36rpx;
+  color: #D3D3D3;
+  cursor: pointer;
+}
+
+.score-stars .star.active {
+  color: #FFD700;
+}
+
+/* 评分容器 */
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 10rpx;
+}
+
+.rating-stars .star {
+  font-size: 40rpx;
+  color: #D3D3D3;
+  cursor: pointer;
+}
+
+.rating-stars .star.active {
+  color: #FFD700;
+}
+
+.rating-text {
+  font-size: 28rpx;
+  color: #8B4513;
+  font-weight: bold;
+}
+
+/* 保存按钮 */
+.save-btn-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx;
+  background-color: #F5F5DC;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.save-btn {
+  width: 100%;
+  background-color: #8B4513;
+  color: #ffffff;
+  border-radius: 8rpx;
+  padding: 24rpx;
+  font-size: 32rpx;
+  border: none;
+}
+
+.save-btn:active {
+  background-color: #6B3410;
+}
+
