@@ -1,0 +1,41 @@
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- 主题色（浅咖） -->
+  <defs>
+    <style>
+      .brown { stroke:#A4723A; fill:none; }
+      .fill-brown { fill:#A4723A; }
+      .stroke-brown { stroke:#A4723A; }
+    </style>
+    <!-- 顶部半圆弧（用于排版文字） -->
+    <path id="topArc" d="M120,400 A280,280 0 0 1 680,400" />
+  </defs>
+
+  <!-- 外圈 -->
+  <circle cx="400" cy="400" r="330" class="brown" stroke-width="24" />
+
+  <!-- 顶部弧形英文（可编辑文字） -->
+  <text font-family="sans-serif" font-weight="700" font-size="64" fill="#A4723A" letter-spacing="4">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">BEAN NOTE</textPath>
+  </text>
+
+  <!-- 中心图形：笔记本 + 实心咖啡豆 -->
+  <!-- 笔记本主体 -->
+  <rect x="290" y="310" width="220" height="260" rx="28" class="brown" stroke-width="20"/>
+
+  <!-- 笔记本底部页脚阴影线（双层页脚的极简表达） -->
+  <path d="M320,540 H480" class="brown" stroke-width="20" stroke-linecap="round"/>
+
+  <!-- 笔记本装订环 -->
+  <rect x="332" y="290" width="28" height="28" rx="6" class="fill-brown"/>
+  <rect x="386" y="290" width="28" height="28" rx="6" class="fill-brown"/>
+  <rect x="440" y="290" width="28" height="28" rx="6" class="fill-brown"/>
+
+  <!-- 实心咖啡豆 -->
+  <ellipse cx="400" cy="440" rx="70" ry="92" class="fill-brown"/>
+  <!-- 咖啡豆中缝（用白色描边形成切缝效果；如需透明背景更纯粹，可改成蒙版） -->
+  <path d="M400,350
+           C 375,385 375,495 400,530
+           M400,350
+           C 425,385 425,495 400,530"
+        stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

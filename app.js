@@ -1,8 +1,10 @@
 // app.js
 App({
   onLaunch() {
-    // 初始化本地存储
+    this.initCloud()
     this.initStorage()
+    this.loadUserProfile()
+    this.ensureLaunchLogin()
   },
 
   onError(msg) {
@@ -13,6 +15,18 @@ App({
       console.warn('网络请求失败，但不影响小程序运行')
       return
     }
+  },
+
+  initCloud() {
+    if (!wx.cloud) {
+      console.warn('基础库过低，无法使用云开发能力')
+      return
+    }
+    
+    wx.cloud.init({
+      env: 'test-3g3ho1oo318ec768', // TODO: 替换为实际环境 ID
+      traceUser: true
+    })
   },
 
   initStorage() {
@@ -27,8 +41,38 @@ App({
     }
   },
 
+  loadUserProfile() {
+    try {
+      const profile = wx.getStorageSync('userProfile') || null
+      const openId = wx.getStorageSync('userOpenId') || ''
+      if (profile) {
+        this.globalData.userProfile = profile
+      }
+      if (openId) {
+        this.globalData.openId = openId
+      }
+    } catch (err) {
+      console.warn('加载本地用户信息失败', err)
+    }
+  },
+
+  ensureLaunchLogin() {
+    const profile = this.globalData.userProfile
+    const openId = this.globalData.openId
+    if (!profile || !openId) {
+      const pages = getCurrentPages()
+      if (pages.length > 0) {
+        const current = pages[pages.length - 1]
+        if (current && typeof current.onNeedLogin === 'function') {
+          current.onNeedLogin()
+        }
+      }
+    }
+  },
+
   globalData: {
-    userInfo: null
+    userProfile: null,
+    openId: ''
   }
 })
 

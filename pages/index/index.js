@@ -1,72 +1,99 @@
 // pages/index/index.js
+// 首页（我的豆单）逻辑
+// 负责：加载本地豆单数据、搜索过滤、跳转详情页、长按删除等交互
 const dataModel = require('../../utils/dataModel.js')
 
 Page({
   data: {
-    coffeeBeans: [],
-    searchKeyword: '',
-    showEmpty: false,
-    filters: {
-      type: '',      // 类型筛选：pourOver / espresso / ''
-      brand: '',     // 品牌筛选
-      minRating: 0   // 最低评分
+    coffeeBeans: [],        // 首页展示的咖啡豆卡片列表（已经映射为视图模型）
+    searchKeyword: '',      // 搜索关键字（双向绑定搜索框）
+    showEmpty: false,       // 是否展示空状态
+    filters: {              // 预留的筛选条件，当前版本仅使用 keyword
+      type: '',             // pourOver / espresso / '' — 类型筛选
+      brand: '',
+      minRating: 0
     }
   },
 
   onLoad() {
+    // 初次加载页时拉取数据
     this.loadCoffeeBeans()
   },
 
   onShow() {
-    // 每次显示页面时重新加载数据
+    // 从详情页返回时刷新列表，保持数据同步
     this.loadCoffeeBeans()
   },
 
-  // 加载咖啡豆列表
+  /**
+   * 拉取并映射首页列表数据
+   * 说明：
+   * - dataModel.getHomeList 会返回已经格式化好的视图模型
+   * - 处理完数据后根据列表长度决定是否展示空态
+   */
   loadCoffeeBeans() {
-    const beans = dataModel.searchBeans(this.data.searchKeyword, this.data.filters)
+    const { searchKeyword, filters } = this.data
+    const beans = dataModel.getHomeList(searchKeyword, filters)
+
     this.setData({
       coffeeBeans: beans,
       showEmpty: beans.length === 0
     })
   },
 
-  // 搜索功能
+  /**
+   * 搜索框输入事件
+   * - 更新关键字后重新加载数据
+   * - 使用 setData 的回调保证 loadCoffeeBeans 在数据更新后执行
+   */
   onSearchInput(e) {
-    const keyword = e.detail.value
-    this.setData({
-      searchKeyword: keyword
-    })
-    this.loadCoffeeBeans()
-  },
-
-  // 跳转到详情页（新增）
-  goToAdd() {
-    wx.navigateTo({
-      url: '/pages/detail/detail'
+    const keyword = e.detail.value || ''
+    this.setData({ searchKeyword: keyword.trim() }, () => {
+      this.loadCoffeeBeans()
     })
   },
 
-  // 跳转到详情页（编辑）
+  /**
+   * 卡片点击：进入详情/编辑页面
+   * @param {Object} e - 事件对象，包含 data-id
+   */
   goToDetail(e) {
-    const id = e.currentTarget.dataset.id
+    const { id } = e.currentTarget.dataset
+    if (!id) return
     wx.navigateTo({
       url: `/pages/detail/detail?id=${id}`
     })
   },
 
-  // 删除咖啡豆
-  deleteBean(e) {
-    const id = e.currentTarget.dataset.id
-    const that = this
+  /**
+   * 长按卡片：展示操作菜单
+   * - 当前仅提供删除操作，可扩展更多选项
+   */
+  showDeleteMenu(e) {
+    const { id } = e.currentTarget.dataset
+    if (!id) return
+    wx.showActionSheet({
+      itemList: ['删除'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          this.deleteBean(id)
+        }
+      }
+    })
+  },
 
+  /**
+   * 删除记录并刷新列表
+   * - 删除成功后提示用户，并重新拉取列表
+   */
+  deleteBean(id) {
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这条咖啡豆记录吗？',
-      success(res) {
+      success: (res) => {
         if (res.confirm) {
           dataModel.deleteBean(id)
-          that.loadCoffeeBeans()
+          this.loadCoffeeBeans()
           wx.showToast({
             title: '删除成功',
             icon: 'success'
@@ -74,6 +101,15 @@ Page({
         }
       }
     })
+  },
+
+  /**
+   * 悬浮按钮：进入新增页面
+   * - 默认进入手冲豆的新增流程
+   */
+  goToAdd() {
+    wx.navigateTo({
+      url: '/pages/detail/detail?mode=create&type=pourOver'
+    })
   }
 })
-

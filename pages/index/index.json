@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "豆单",
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "disableScrollBounce": true
 }
 

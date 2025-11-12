@@ -1,178 +1,271 @@
 /* pages/index/index.wxss */
-.container {
-  padding: 20rpx;
+
+/* ===== 页面结构 ===== */
+.page {
   min-height: 100vh;
-  padding-bottom: 120rpx; /* 为FAB按钮留出空间 */
+  padding: 48rpx 32rpx 200rpx;
+  background: linear-gradient(180deg, #f2efeb 0%, #f9f7f5 220rpx, #f9f7f5 100%);
+  box-sizing: border-box;
 }
 
-/* 搜索框 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+.header-action {
+  font-size: 32rpx;
+  color: #c0b6aa;
+}
+
+/* ===== 搜索框 ===== */
 .search-container {
-  margin-bottom: 20rpx;
+  position: relative;
+  margin-bottom: 40rpx;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 32rpx;
+  transform: translateY(-50%);
+  font-size: 32rpx;
+  color: #888888;
+  pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 20rpx;
+  height: 88rpx;
+  padding: 0 32rpx 0 88rpx;
+  border-radius: 44rpx;
   background-color: #ffffff;
-  border-radius: 12rpx;
-  font-size: 28rpx;
+  border: 2rpx solid #e5ded4;
   box-sizing: border-box;
-  border: 2rpx solid #E0E0E0;
+  font-size: 28rpx;
+  color: #333333;
 }
 
 .search-input:focus {
-  border-color: #8B4513;
+  border-color: #d6b58f;
 }
 
-/* 空状态 */
+/* ===== 空态 ===== */
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 100rpx 20rpx;
-  margin-top: 200rpx;
+  padding: 120rpx 32rpx;
+  text-align: center;
+  color: #888888;
 }
 
-.empty-text {
-  font-size: 32rpx;
-  color: #999999;
-  margin-bottom: 10rpx;
+.empty-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 16rpx;
+  margin-bottom: 16rpx;
 }
 
 .empty-hint {
-  font-size: 24rpx;
-  color: #CCCCCC;
+  font-size: 36rpx;
+  color: #c0b6aa;
 }
 
-/* 咖啡豆列表 */
+/* ===== 列表格栅 ===== */
 .bean-list {
-  padding-bottom: 40rpx;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24rpx 0;
 }
 
 .bean-card {
+  width: calc(50% - 12rpx);
   background-color: #ffffff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-}
-
-.bean-header {
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
-  padding-bottom: 20rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.bean-name {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333333;
+.bean-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
+}
+
+/* ===== 图片区域 ===== */
+.bean-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280rpx;
+  background: linear-gradient(135deg, #f9f7f5 0%, #efe7dd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bean-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bean-image-placeholder {
+  font-size: 80rpx;
+  color: #d6c8b8;
+}
+
+.bean-badge {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  padding: 10rpx 20rpx;
+  background-color: rgba(214, 181, 143, 0.9);
+  color: #ffffff;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+}
+
+/* ===== 内容区域 ===== */
+.bean-content {
+  padding: 28rpx 28rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
   flex: 1;
 }
 
-.bean-info {
-  margin-bottom: 20rpx;
-}
-
-.info-item {
-  margin-bottom: 10rpx;
+.bean-name {
   font-size: 28rpx;
-}
-
-.info-label {
-  color: #666666;
-}
-
-.info-value {
+  font-weight: 700;
   color: #333333;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bean-brand {
+  font-size: 26rpx;
+  color: #888888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.bean-tags-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.tag {
+  padding: 8rpx 20rpx;
+  border-radius: 50rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tag.type {
+  background-color: rgba(214, 181, 143, 0.16);
+  color: #a4723a;
+}
+
+.tag.roast {
+  background-color: rgba(240, 230, 192, 0.7);
+  color: #8d6a2f;
 }
 
 .bean-rating {
   display: flex;
-  align-items: center;
-  gap: 10rpx;
-  margin-bottom: 20rpx;
+  align-items: flex-start;
+  gap: 2rpx;
 }
 
-.rating-text {
-  font-size: 24rpx;
-  color: #666666;
+.brand-rating-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .rating-stars {
   display: flex;
-  gap: 4rpx;
+  gap: 6rpx;
 }
 
 .star {
-  font-size: 28rpx;
-  color: #D3D3D3;
+  font-size: 24rpx;
+  color: #d0c6ba;
 }
 
 .star.active {
-  color: #FFD700;
+  color: #d6b58f;
 }
 
 .rating-value {
-  font-size: 24rpx;
-  color: #8B4513;
-  font-weight: bold;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #d6b58f;
 }
 
 .bean-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 20rpx;
-  border-top: 1rpx solid #F0F0F0;
+  padding: 20rpx 28rpx 28rpx;
+  border-top: 1rpx solid #f2efeb;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.bean-origin {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bean-date {
-  font-size: 24rpx;
-  color: #999999;
+  margin-left: 16rpx;
+  color: #c0b6aa;
 }
 
-.action-btn {
-  padding: 10rpx 20rpx;
-  border-radius: 8rpx;
-  font-size: 24rpx;
-}
-
-.delete-btn {
-  background-color: #FF6B6B;
-  color: #ffffff;
-}
-
-.delete-btn:active {
-  background-color: #FF5252;
-}
-
-/* 悬浮添加按钮 */
+/* ===== 悬浮按钮 ===== */
 .fab {
   position: fixed;
-  right: 30rpx;
-  bottom: 120rpx;
-  width: 100rpx;
-  height: 100rpx;
-  background-color: #8B4513;
+  right: 48rpx;
+  bottom: 80rpx;
+  width: 120rpx;
+  height: 120rpx;
+  background-color: #d6b58f;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 12rpx rgba(139, 69, 19, 0.3);
-  z-index: 100;
-}
-
-.fab-icon {
-  font-size: 50rpx;
   color: #ffffff;
+  font-size: 56rpx;
+  box-shadow: 0 12rpx 32rpx rgba(166, 128, 80, 0.35);
+  z-index: 99;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .fab:active {
-  background-color: #6B3410;
+  transform: scale(0.95);
+  box-shadow: 0 8rpx 20rpx rgba(166, 128, 80, 0.4);
 }
 
+.fab-icon {
+  line-height: 1;
+}

@@ -1,0 +1,351 @@
+/* utils/theme.wxss */
+/* 主题色样式工具类 */
+
+/* ========== 颜色类 ========== */
+
+/* 主色 */
+.theme-primary {
+  color: #8B4513;
+}
+
+.theme-primary-bg {
+  background-color: #8B4513;
+}
+
+.theme-primary-dark {
+  color: #6B3410;
+}
+
+.theme-primary-dark-bg {
+  background-color: #6B3410;
+}
+
+.theme-primary-light {
+  color: #A0522D;
+}
+
+.theme-primary-light-bg {
+  background-color: #A0522D;
+}
+
+/* 背景色 */
+.theme-bg {
+  background-color: #F5F5DC;
+}
+
+.theme-bg-light {
+  background-color: #FFFFFF;
+}
+
+.theme-bg-gray {
+  background-color: #F5F5F5;
+}
+
+/* 文本色 */
+.theme-text-primary {
+  color: #333333;
+}
+
+.theme-text-secondary {
+  color: #666666;
+}
+
+.theme-text-tertiary {
+  color: #999999;
+}
+
+.theme-text-disabled {
+  color: #CCCCCC;
+}
+
+.theme-text-white {
+  color: #FFFFFF;
+}
+
+/* 边框色 */
+.theme-border {
+  border-color: #E0E0E0;
+}
+
+.theme-border-light {
+  border-color: #F0F0F0;
+}
+
+.theme-border-dark {
+  border-color: #CCCCCC;
+}
+
+.theme-border-focus {
+  border-color: #8B4513;
+}
+
+/* 功能色 */
+.theme-success {
+  color: #4CAF50;
+}
+
+.theme-success-bg {
+  background-color: #4CAF50;
+}
+
+.theme-warning {
+  color: #FF9800;
+}
+
+.theme-warning-bg {
+  background-color: #FF9800;
+}
+
+.theme-error {
+  color: #FF6B6B;
+}
+
+.theme-error-bg {
+  background-color: #FF6B6B;
+}
+
+.theme-info {
+  color: #2196F3;
+}
+
+.theme-info-bg {
+  background-color: #2196F3;
+}
+
+/* 特殊色 */
+.theme-star {
+  color: #FFD700;
+}
+
+.theme-star-inactive {
+  color: #D3D3D3;
+}
+
+.theme-tag {
+  background-color: #F0E68C;
+  color: #8B4513;
+}
+
+/* ========== 组件样式类 ========== */
+
+/* 按钮 */
+.theme-btn-primary {
+  background-color: #8B4513;
+  color: #FFFFFF;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+}
+
+.theme-btn-primary:active {
+  background-color: #6B3410;
+}
+
+.theme-btn-error {
+  background-color: #FF6B6B;
+  color: #FFFFFF;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+}
+
+.theme-btn-error:active {
+  background-color: #FF5252;
+}
+
+.theme-btn-default {
+  background-color: #FFFFFF;
+  color: #333333;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+}
+
+/* 卡片 */
+.theme-card {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.theme-card-no-shadow {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 输入框 */
+.theme-input {
+  width: 100%;
+  padding: 20rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  background-color: #FFFFFF;
+}
+
+.theme-input:focus {
+  border-color: #8B4513;
+}
+
+/* 标签 */
+.theme-tag {
+  background-color: #F0E68C;
+  color: #8B4513;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  display: inline-block;
+}
+
+.theme-tag-pour-over {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.theme-tag-espresso {
+  background-color: #FFF3E0;
+  color: #E65100;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* 分隔线 */
+.theme-divider {
+  height: 1rpx;
+  background-color: #F0F0F0;
+  margin: 20rpx 0;
+}
+
+.theme-divider-dark {
+  height: 1rpx;
+  background-color: #E0E0E0;
+  margin: 20rpx 0;
+}
+
+/* 阴影 */
+.theme-shadow {
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.theme-shadow-primary {
+  box-shadow: 0 4rpx 12rpx rgba(139, 69, 19, 0.3);
+}
+
+.theme-shadow-sm {
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
+}
+
+.theme-shadow-lg {
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+/* ========== 工具类 ========== */
+
+/* 圆角 */
+.theme-radius-sm {
+  border-radius: 4rpx;
+}
+
+.theme-radius {
+  border-radius: 8rpx;
+}
+
+.theme-radius-md {
+  border-radius: 12rpx;
+}
+
+.theme-radius-lg {
+  border-radius: 16rpx;
+}
+
+.theme-radius-full {
+  border-radius: 50%;
+}
+
+/* 间距 */
+.theme-p-sm {
+  padding: 10rpx;
+}
+
+.theme-p {
+  padding: 20rpx;
+}
+
+.theme-p-md {
+  padding: 30rpx;
+}
+
+.theme-p-lg {
+  padding: 40rpx;
+}
+
+.theme-m-sm {
+  margin: 10rpx;
+}
+
+.theme-m {
+  margin: 20rpx;
+}
+
+.theme-m-md {
+  margin: 30rpx;
+}
+
+.theme-m-lg {
+  margin: 40rpx;
+}
+
+/* 文本 */
+.theme-text-xs {
+  font-size: 22rpx;
+}
+
+.theme-text-sm {
+  font-size: 24rpx;
+}
+
+.theme-text {
+  font-size: 28rpx;
+}
+
+.theme-text-md {
+  font-size: 32rpx;
+}
+
+.theme-text-lg {
+  font-size: 36rpx;
+}
+
+.theme-text-xl {
+  font-size: 40rpx;
+}
+
+.theme-text-bold {
+  font-weight: bold;
+}
+
+.theme-text-center {
+  text-align: center;
+}
+
+.theme-text-right {
+  text-align: right;
+}
+

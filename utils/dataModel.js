@@ -1,186 +1,361 @@
 // utils/dataModel.js
-// 数据模型定义和工具函数
+// 咖啡豆记录模型（遵循 prd_v1 配置）
 
 /**
- * 咖啡豆类型枚举
+ * 枚举：咖啡豆类型
  */
-const BEAN_TYPE = {
-  POUR_OVER: 'pourOver',  // 手冲
-  ESPRESSO: 'espresso'     // 意式
-}
+const BEAN_TYPE = Object.freeze({
+  POUR_OVER: 'pourOver',   // 手冲
+  ESPRESSO: 'espresso'    // 意式
+})
 
 /**
- * 烘焙度选项
+ * 枚举：烘焙度
  */
-const ROAST_LEVELS = [
+const ROAST_LEVELS = Object.freeze([
   '浅烘',
   '中浅烘',
   '中烘',
   '中深烘',
   '深烘'
-]
+])
 
 /**
- * 创建新的咖啡豆记录（手冲）
+ * 默认风味标签
  */
-function createPourOverBean(data = {}) {
+const DEFAULT_FLAVOR_TAGS = Object.freeze([
+  '花香',
+  '柑橘',
+  '果酸',
+  '坚果',
+  '巧克力',
+  '焦糖'
+])
+
+const STORAGE_KEY = 'coffeeBeans'
+
+function generateId() {
+  return `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+}
+
+function now() {
+  return new Date().toISOString()
+}
+
+/**
+ * 创建基础通用字段
+ */
+function createBaseRecord(payload = {}) {
   return {
-    id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-    type: BEAN_TYPE.POUR_OVER,
-    name: data.name || '',
-    brand: data.brand || '',
-    roastLevel: data.roastLevel || '',
-    origin: data.origin || '',
-    // 冲煮参数
+    id: payload.id || generateId(),
+    type: payload.type || BEAN_TYPE.POUR_OVER,
+    name: payload.name || '',
+    brand: payload.brand || '',
+    roastLevel: payload.roastLevel || '',
+    origin: payload.origin || '',
+    rating: typeof payload.rating === 'number' ? payload.rating : 0,
+    flavors: Array.isArray(payload.flavors) ? payload.flavors : [],
+    notes: payload.notes || '',
+    coverImage: payload.coverImage || '',
+    equipment: {
+      brewer: payload.equipment?.brewer || '',
+      grinder: payload.equipment?.grinder || ''
+    },
+    createdAt: payload.createdAt || now(),
+    updatedAt: payload.updatedAt || now()
+  }
+}
+
+/**
+ * 手冲（pourOver）记录
+ */
+function createPourOverRecord(payload = {}) {
+  const base = createBaseRecord({
+    ...payload,
+    type: BEAN_TYPE.POUR_OVER
+  })
+
+  return {
+    ...base,
     brewParams: {
-      coffeeWeight: data.brewParams?.coffeeWeight || '',      // 粉量 g
-      waterWeight: data.brewParams?.waterWeight || '',        // 水量 ml
-      temperature: data.brewParams?.temperature || '',        // 温度 °C
-      time: data.brewParams?.time || '',                       // 时间 s
-      grindSize: data.brewParams?.grindSize || ''             // 研磨度
-    },
-    // 风味描述（标签数组）
-    flavors: data.flavors || [],
-    // 备注
-    notes: data.notes || '',
-    // 评分（1-5星）
-    rating: data.rating || 0,
-    // 封面图
-    coverImage: data.coverImage || '',
-    // 创建时间
-    createdAt: data.createdAt || new Date().toISOString(),
-    // 更新时间
-    updatedAt: data.updatedAt || new Date().toISOString()
+      coffeeWeight: normalizeNumber(payload.brewParams?.coffeeWeight),
+      waterWeight: normalizeNumber(payload.brewParams?.waterWeight),
+      temperature: normalizeNumber(payload.brewParams?.temperature),
+      time: normalizeNumber(payload.brewParams?.time),
+      grindSize: payload.brewParams?.grindSize || ''
+    }
   }
 }
 
 /**
- * 创建新的咖啡豆记录（意式）
+ * 意式（espresso）记录
  */
-function createEspressoBean(data = {}) {
+function createEspressoRecord(payload = {}) {
+  const base = createBaseRecord({
+    ...payload,
+    type: BEAN_TYPE.ESPRESSO
+  })
+
   return {
-    id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-    type: BEAN_TYPE.ESPRESSO,
-    name: data.name || '',
-    brand: data.brand || '',
-    roastLevel: data.roastLevel || '',
-    origin: data.origin || '',
-    // 萃取参数
+    ...base,
     extractParams: {
-      coffeeWeight: data.extractParams?.coffeeWeight || '',   // 粉量 g
-      outputWeight: data.extractParams?.outputWeight || '',   // 出品量 g
-      time: data.extractParams?.time || '',                   // 时间 s
-      grindSize: data.extractParams?.grindSize || ''          // 研磨度
+      coffeeWeight: normalizeNumber(payload.extractParams?.coffeeWeight),
+      outputWeight: normalizeNumber(payload.extractParams?.outputWeight),
+      temperature: normalizeNumber(payload.extractParams?.temperature),
+      time: normalizeNumber(payload.extractParams?.time),
+      grindSize: payload.extractParams?.grindSize || ''
     },
-    // 风味评分（各项1-5分）
     flavorScores: {
-      bitterness: data.flavorScores?.bitterness || 0,        // 苦味
-      acidity: data.flavorScores?.acidity || 0,               // 酸度
-      balance: data.flavorScores?.balance || 0,               // 平衡感
-      body: data.flavorScores?.body || 0                      // 口感厚度
-    },
-    // 备注
-    notes: data.notes || '',
-    // 综合评分（1-5星）
-    rating: data.rating || 0,
-    // 封面图
-    coverImage: data.coverImage || '',
-    // 创建时间
-    createdAt: data.createdAt || new Date().toISOString(),
-    // 更新时间
-    updatedAt: data.updatedAt || new Date().toISOString()
+      bitterness: normalizeNumber(payload.flavorScores?.bitterness),
+      acidity: normalizeNumber(payload.flavorScores?.acidity),
+      balance: normalizeNumber(payload.flavorScores?.balance),
+      body: normalizeNumber(payload.flavorScores?.body)
+    }
+  }
+}
+
+function normalizeNumber(value) {
+  if (value === 0) return 0
+  const num = Number(value)
+  return Number.isFinite(num) ? num : null
+}
+
+/**
+ * 确保记录结构完整
+ */
+function normalizeRecord(record = {}) {
+  if (!record || typeof record !== 'object') {
+    return createPourOverRecord()
+  }
+  if (record.type === BEAN_TYPE.ESPRESSO) {
+    return createEspressoRecord(record)
+  }
+  return createPourOverRecord(record)
+}
+
+/**
+ * 评分展示（xx.x）
+ */
+function formatRating(rating) {
+  if (!rating || rating <= 0) return '0.0'
+  return Number(rating).toFixed(1)
+}
+
+/**
+ * 日期展示（yy-mm-dd）
+ */
+function formatDate(dateString) {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return ''
+  const year = date.getFullYear().toString().slice(-2)
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * 首页卡片视图模型
+ */
+function mapToHomeCard(record) {
+  const bean = normalizeRecord(record)
+  return {
+    ...bean,
+    displayRating: formatRating(bean.rating),
+    displayDate: formatDate(bean.createdAt),
+    hasCover: Boolean(bean.coverImage)
   }
 }
 
 /**
- * 保存咖啡豆记录到本地存储
+ * 本地存储操作
  */
+function loadFromStorage() {
+  try {
+    return wx.getStorageSync(STORAGE_KEY) || []
+  } catch (e) {
+    console.warn('[BeanModel] load failed', e)
+    return []
+  }
+}
+
+function saveToStorage(list) {
+  try {
+    wx.setStorageSync(STORAGE_KEY, list)
+  } catch (e) {
+    console.warn('[BeanModel] save failed', e)
+  }
+}
+
 function saveBean(bean) {
-  const beans = wx.getStorageSync('coffeeBeans') || []
-  const index = beans.findIndex(b => b.id === bean.id)
-  
+  const normalized = normalizeRecord(bean)
+  const list = loadFromStorage()
+  const index = list.findIndex(item => item.id === normalized.id)
   if (index >= 0) {
-    // 更新现有记录
-    bean.updatedAt = new Date().toISOString()
-    beans[index] = bean
+    normalized.updatedAt = now()
+    list[index] = normalized
   } else {
-    // 新增记录
-    beans.push(bean)
+    list.push(normalized)
   }
-  
-  wx.setStorageSync('coffeeBeans', beans)
-  return bean
+  saveToStorage(list)
+  return normalized
 }
 
-/**
- * 获取所有咖啡豆记录
- */
 function getAllBeans() {
-  return wx.getStorageSync('coffeeBeans') || []
+  return loadFromStorage().map(normalizeRecord)
 }
 
-/**
- * 根据ID获取咖啡豆记录
- */
 function getBeanById(id) {
-  const beans = getAllBeans()
-  return beans.find(b => b.id === id) || null
+  return getAllBeans().find(bean => bean.id === id) || null
 }
 
-/**
- * 删除咖啡豆记录
- */
-function deleteBeanById(id) {
-  const beans = getAllBeans()
-  const filtered = beans.filter(b => b.id !== id)
-  wx.setStorageSync('coffeeBeans', filtered)
+function deleteBean(id) {
+  const list = loadFromStorage()
+  const filtered = list.filter(item => item.id !== id)
+  saveToStorage(filtered)
   return true
 }
 
-/**
- * 搜索咖啡豆
- */
-function searchBeans(keyword, filters = {}) {
+function searchBeans(keyword = '', filters = {}) {
+  keyword = keyword.trim()
   let beans = getAllBeans()
-  
-  // 关键词搜索
+
   if (keyword) {
     beans = beans.filter(bean => {
-      return (bean.name && bean.name.includes(keyword)) ||
-             (bean.brand && bean.brand.includes(keyword)) ||
-             (bean.origin && bean.origin.includes(keyword)) ||
-             (bean.flavors && bean.flavors.some(f => f.includes(keyword)))
+      return (
+        bean.name.includes(keyword) ||
+        bean.brand.includes(keyword) ||
+        bean.origin.includes(keyword) ||
+        bean.flavors.some(tag => tag.includes(keyword))
+      )
     })
   }
-  
-  // 类型筛选
+
   if (filters.type) {
     beans = beans.filter(bean => bean.type === filters.type)
   }
-  
-  // 品牌筛选
+
   if (filters.brand) {
     beans = beans.filter(bean => bean.brand === filters.brand)
   }
-  
-  // 评分筛选
+
   if (filters.minRating) {
     beans = beans.filter(bean => bean.rating >= filters.minRating)
   }
-  
+
   return beans
 }
 
-// 导出模块
+/**
+ * 首页列表（映射视图模型）
+ */
+function getHomeList(keyword = '', filters = {}) {
+  return searchBeans(keyword, filters).map(mapToHomeCard)
+}
+
+/**
+ * 样例数据（用于开发展示）
+ */
+const SAMPLE_BEAN_LIST = [
+  createPourOverRecord({
+    name: '清晨荣耀拼配',
+    brand: '烘焙公司',
+    roastLevel: '浅烘',
+    origin: '哥伦比亚',
+    rating: 4.5,
+    flavors: ['花香', '柑橘'],
+    brewParams: {
+      coffeeWeight: 18,
+      waterWeight: 270,
+      temperature: 92,
+      time: 150,
+      grindSize: 'V60 中粗'
+    },
+    equipment: {
+      brewer: 'Hario V60',
+      grinder: 'EK 7.5'
+    },
+    createdAt: '2023-10-26T08:00:00.000Z'
+  }),
+  createPourOverRecord({
+    name: '耶加雪菲日晒',
+    brand: '工匠烘坊',
+    roastLevel: '浅烘',
+    origin: '埃塞俄比亚',
+    rating: 5.0,
+    flavors: ['花香', '果酸', '莓果'],
+    brewParams: {
+      coffeeWeight: 16,
+      waterWeight: 240,
+      temperature: 93,
+      time: 135,
+      grindSize: 'ORIGAMI 中细'
+    },
+    equipment: {
+      brewer: 'Origami S',
+      grinder: 'Comandante 24'
+    },
+    createdAt: '2023-10-22T08:00:00.000Z'
+  }),
+  createPourOverRecord({
+    name: '午夜意式浓缩',
+    brand: '烘焙公司',
+    roastLevel: '深烘',
+    origin: '拼配',
+    rating: 4.0,
+    flavors: ['巧克力', '焦糖'],
+    brewParams: {
+      coffeeWeight: 20,
+      waterWeight: 300,
+      temperature: 90,
+      time: 180,
+      grindSize: 'Kalita 185 中粗'
+    },
+    equipment: {
+      brewer: 'Kalita 185',
+      grinder: 'Ek 8.0'
+    },
+    createdAt: '2023-10-20T08:00:00.000Z'
+  }),
+  createPourOverRecord({
+    name: '哥伦比亚至尊',
+    brand: '单品专家',
+    roastLevel: '中烘',
+    origin: '哥伦比亚',
+    rating: 4.8,
+    flavors: ['坚果', '焦糖', '可可'],
+    brewParams: {
+      coffeeWeight: 17,
+      waterWeight: 255,
+      temperature: 91,
+      time: 165,
+      grindSize: 'V60 中粗'
+    },
+    equipment: {
+      brewer: 'V60 02',
+      grinder: 'EK 7.8'
+    },
+    createdAt: '2023-10-15T08:00:00.000Z'
+  })
+]
+
 module.exports = {
-  BEAN_TYPE: BEAN_TYPE,
-  ROAST_LEVELS: ROAST_LEVELS,
-  createPourOverBean: createPourOverBean,
-  createEspressoBean: createEspressoBean,
-  saveBean: saveBean,
-  getAllBeans: getAllBeans,
-  getBeanById: getBeanById,
-  deleteBean: deleteBeanById,
-  searchBeans: searchBeans
+  BEAN_TYPE,
+  ROAST_LEVELS,
+  DEFAULT_FLAVOR_TAGS,
+  createBaseRecord,
+  createPourOverRecord,
+  createEspressoRecord,
+  normalizeRecord,
+  formatRating,
+  formatDate,
+  mapToHomeCard,
+  getAllBeans,
+  getBeanById,
+  saveBean,
+  deleteBean,
+  searchBeans,
+  getHomeList,
+  SAMPLE_BEAN_LIST
 }
 

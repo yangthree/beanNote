@@ -1,0 +1,48 @@
+{
+  "appid": "wx3b25798ff5c19098",
+  "compileType": "miniprogram",
+  "projectname": "coffee-bean-notes",
+  "miniprogramRoot": "./",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "prd"
+      },
+      {
+        "type": "folder",
+        "value": "design_figma"
+      },
+      {
+        "type": "folder",
+        "value": "assets/prd"
+      },
+      {
+        "type": "file",
+        "value": "CURSOR_MCP_CONFIG.md"
+      },
+      {
+        "type": "file",
+        "value": "README_配置MCP.md"
+      },
+      {
+        "type": "file",
+        "value": "quick_setup.sh"
+      },
+      {
+        "type": "file",
+        "value": "setup_figma_mcp.sh"
+      }
+    ]
+  },
+  "setting": {
+    "es6": true,
+    "enhance": false,
+    "postcss": true,
+    "minify": false,
+    "urlCheck": false
+  },
+  "condition": {},
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
+}
