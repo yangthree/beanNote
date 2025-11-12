@@ -26,6 +26,16 @@
     >意式豆</view>
   </view>
 
+  <!-- 右上角发布按钮 -->
+  <view class="publish-btn" bindtap="openPublishDialog" wx:if="{{isEdit && beanId}}">
+    <text class="publish-icon">☁</text>
+  </view>
+
+  <!-- 测试用：清除登录状态按钮（开发阶段使用，上线前删除） -->
+  <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
+    <text class="clear-login-text">清除登录</text>
+  </view>
+
   <!-- 内容区域滚动 -->
   <scroll-view class="scroll-area" scroll-y show-scrollbar="false" enhanced="true" bounces="false">
     <!-- 基本信息 -->
@@ -307,13 +317,55 @@
   <!-- 登录提示弹窗：提醒用户授权微信信息 -->
   <view class="login-mask" wx:if="{{showLoginDialog}}">
     <view class="login-dialog">
-      <view class="login-title">需要登录</view>
+      <view class="login-title">请先登录</view>
       <view class="login-desc">
-        登录后即可发布豆单到发现页，展示您的头像与昵称。
+        为保障数据同步与发布功能，请设置您的头像和昵称。
       </view>
+      
+      <!-- 用户信息设置区域 -->
+      <view class="user-info-form">
+        <!-- 头像选择 -->
+        <view class="avatar-section">
+          <text class="form-label">头像</text>
+          <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+            <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="avatar-placeholder">
+              <text class="avatar-icon">👤</text>
+              <text class="avatar-text">点击选择头像</text>
+            </view>
+          </button>
+        </view>
+        
+        <!-- 昵称输入 -->
+        <view class="nickname-section">
+          <text class="form-label">昵称</text>
+          <input 
+            class="nickname-input" 
+            type="nickname" 
+            placeholder="请输入昵称"
+            value="{{tempNickName}}"
+            bindinput="onNickNameInput"
+            bindblur="onNickNameBlur"
+          />
+        </view>
+      </view>
+      
       <view class="login-actions">
-        <button class="login-btn ghost" hover-class="none" bindtap="closeLoginDialog">稍后</button>
-        <button class="login-btn primary" hover-class="none" loading="{{isLoggingIn}}" bindtap="confirmLogin">立即登录</button>
+        <button class="login-btn primary" hover-class="none" loading="{{isLoggingIn}}" bindtap="confirmLogin">确认登录</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布确认弹窗 -->
+  <view class="login-mask" wx:if="{{showPublishDialog}}" bindtap="closePublishDialog">
+    <view class="publish-dialog" catchtap="stopPropagation">
+      <view class="publish-title">是否发布这条豆单？</view>
+      <view class="publish-desc">
+        发布后将展示在"发现"首页，其他用户可浏览。
+      </view>
+      <view class="publish-actions">
+        <button class="publish-btn-cancel" hover-class="none" bindtap="closePublishDialog">取消</button>
+        <button class="publish-btn-confirm" hover-class="none" loading="{{isPublishing}}" bindtap="publishRecord">确认发布</button>
       </view>
     </view>
   </view>

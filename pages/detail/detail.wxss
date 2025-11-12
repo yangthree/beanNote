@@ -88,6 +88,51 @@
   z-index: 50;
 }
 
+/* 右上角发布按钮 */
+.publish-btn {
+  position: fixed;
+  top: 24rpx;
+  right: 32rpx;
+  width: 88rpx;
+  height: 88rpx;
+  background: linear-gradient(135deg, #d6b58f 0%, #c9a57f 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(214, 181, 143, 0.4);
+  z-index: 60;
+  transition: all 0.3s ease;
+}
+
+.publish-btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+.publish-icon {
+  font-size: 40rpx;
+  color: #ffffff;
+  line-height: 1;
+}
+
+/* 测试用：清除登录状态按钮（开发阶段使用，上线前删除） */
+.clear-login-btn {
+  position: fixed;
+  top: 140rpx;
+  right: 32rpx;
+  padding: 12rpx 24rpx;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1rpx solid rgba(255, 0, 0, 0.3);
+  border-radius: 20rpx;
+  z-index: 70;
+}
+
+.clear-login-text {
+  font-size: 22rpx;
+  color: #ff4444;
+}
+
 .scroll-area {
   position: absolute;
   top: 100rpx;
@@ -342,13 +387,94 @@
   font-size: 26rpx;
   color: #666666;
   line-height: 1.6;
+  margin-bottom: 32rpx;
+}
+
+/* 用户信息表单 */
+.user-info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.avatar-section,
+.nickname-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+/* 头像选择按钮 */
+.avatar-btn {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  border: 2rpx dashed #d6b58f;
+  background-color: #f9f7f5;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.avatar-icon {
+  font-size: 48rpx;
+  color: #d6b58f;
+}
+
+.avatar-text {
+  font-size: 22rpx;
+  color: #888888;
+}
+
+/* 昵称输入框 */
+.nickname-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 20rpx;
+  border: 2rpx solid #e5ded4;
+  background-color: #ffffff;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+.nickname-input:focus {
+  border-color: #d6b58f;
 }
 
 .login-actions {
-  margin-top: 40rpx;
+  margin-top: 0;
   display: flex;
-  justify-content: flex-end;
-  gap: 20rpx;
+  justify-content: center;
 }
 
 .login-btn {
@@ -359,6 +485,10 @@
   border: none;
   font-size: 28rpx;
   padding: 0 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .login-btn::after {
@@ -377,6 +507,71 @@
 
 .login-btn.primary:active,
 .login-btn.ghost:active {
+  opacity: 0.9;
+}
+
+/* 发布确认弹窗 */
+.publish-dialog {
+  width: 580rpx;
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 0 16rpx 32rpx rgba(0, 0, 0, 0.12);
+}
+
+.publish-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.publish-desc {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.publish-actions {
+  margin-top: 40rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.publish-btn-cancel,
+.publish-btn-confirm {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 36rpx;
+  border: none;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publish-btn-cancel::after,
+.publish-btn-confirm::after {
+  border: none;
+}
+
+.publish-btn-cancel {
+  background-color: rgba(214, 181, 143, 0.18);
+  color: #8a673b;
+}
+
+.publish-btn-confirm {
+  background: linear-gradient(135deg, #d6b58f 0%, #c9a57f 100%);
+  color: #ffffff;
+}
+
+.publish-btn-cancel:active,
+.publish-btn-confirm:active {
   opacity: 0.9;
 }
 
@@ -400,6 +595,14 @@
   font-size: 30rpx;
   font-weight: 600;
   background: linear-gradient(135deg, #d6b58f 0%, #c9a57f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.primary-btn::after {
+  border: none;
 }
 
 .primary-btn:active {

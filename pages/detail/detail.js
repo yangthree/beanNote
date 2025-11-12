@@ -69,7 +69,10 @@ Page({
     userProfile: null,
     isPublishing: false,
     showLoginDialog: false,
+    showPublishDialog: false, // 发布确认弹窗
     isLoggingIn: false,
+    tempAvatarUrl: '', // 临时头像URL（用户选择后）
+    tempNickName: '', // 临时昵称（用户输入后）
     
     // 选项数据
     roastLevels: ROAST_LEVELS,
@@ -95,8 +98,28 @@ Page({
     }
 
     const app = getApp()
+    let profile = null
+
     if (app && app.globalData.userProfile) {
-      this.setData({ userProfile: app.globalData.userProfile })
+      profile = app.globalData.userProfile
+    } else {
+      const cachedProfile = auth.getStoredProfile()
+      const cachedOpenId = auth.getStoredOpenId()
+      if (cachedProfile) {
+        profile = cachedProfile
+        if (app) {
+          app.globalData.userProfile = cachedProfile
+        }
+      }
+      if (cachedOpenId && app) {
+        app.globalData.openId = cachedOpenId
+      }
+    }
+
+    if (profile) {
+      this.setData({ userProfile: profile })
+    } else {
+      this.setData({ showLoginDialog: true })
     }
   },
 
@@ -449,26 +472,147 @@ Page({
     }
   },
 
+  /**
+   * 阻止事件冒泡（用于弹窗内部点击）
+   */
+  stopPropagation() {
+    // 空函数，用于阻止事件冒泡
+  },
+
+  /**
+   * 清除登录状态（用于测试，上线后可删除）
+   */
+  clearLogin() {
+    wx.showModal({
+      title: '清除登录状态',
+      content: '确定要清除登录状态吗？清除后需要重新登录。',
+      success: (res) => {
+        if (res.confirm) {
+          auth.clearProfile()
+          const app = getApp()
+          if (app) {
+            app.globalData.userProfile = null
+            app.globalData.openId = ''
+          }
+          this.setData({
+            userProfile: null,
+            showLoginDialog: true,
+            tempAvatarUrl: '',
+            tempNickName: ''
+          })
+          wx.showToast({
+            title: '已清除登录状态',
+            icon: 'success'
+          })
+        }
+      }
+    })
+  },
+
+  /**
+   * 选择头像
+   * @param {Object} e - 事件对象，包含 avatarUrl
+   */
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail
+    console.log('用户选择头像:', avatarUrl)
+    this.setData({
+      tempAvatarUrl: avatarUrl
+    })
+  },
+
+  /**
+   * 昵称输入
+   * @param {Object} e - 事件对象
+   */
+  onNickNameInput(e) {
+    const nickName = e.detail.value
+    this.setData({
+      tempNickName: nickName
+    })
+  },
+
+  /**
+   * 昵称输入失焦（用户可能通过键盘选择昵称）
+   * @param {Object} e - 事件对象
+   */
+  onNickNameBlur(e) {
+    const nickName = e.detail.value
+    if (nickName) {
+      this.setData({
+        tempNickName: nickName
+      })
+    }
+  },
+
+  /**
+   * 确认登录
+   */
   async confirmLogin() {
     if (this.data.isLoggingIn) return
+    
+    // 验证用户是否设置了头像和昵称
+    if (!this.data.tempAvatarUrl) {
+      wx.showToast({
+        title: '请选择头像',
+        icon: 'none'
+      })
+      return
+    }
+    
+    if (!this.data.tempNickName || !this.data.tempNickName.trim()) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none'
+      })
+      return
+    }
+
     this.setData({ isLoggingIn: true })
+    
     try {
-      // ensureLogin 会拉起微信授权弹窗，用户确认后返回头像/昵称和 openId
-      const { profile, openId } = await auth.ensureLogin()
+      // 获取 OpenID
+      const openId = await auth.callLoginFunction()
+      
+      // 构建用户信息
+      const profile = {
+        nickName: this.data.tempNickName.trim(),
+        avatarUrl: this.data.tempAvatarUrl
+      }
+      
+      console.log('=== 登录用户信息 ===')
+      console.log('profile:', profile)
+      console.log('openId:', openId)
+      console.log('==================')
+      
+      // 保存到本地存储
+      auth.saveProfile(profile, openId)
+      
+      // 保存到云数据库
+      await auth.saveUserToCloud(openId, profile)
+      
+      // 更新全局数据
+      const app = getApp()
+      if (app) {
+        app.globalData.userProfile = profile
+        app.globalData.openId = openId
+      }
+      
       this.setData({
         userProfile: profile,
-        showLoginDialog: false
+        showLoginDialog: false,
+        tempAvatarUrl: '',
+        tempNickName: ''
       })
-      if (openId) {
-        wx.setStorageSync('userOpenId', openId)
-      }
+      
       wx.showToast({
         title: '登录成功',
         icon: 'success'
       })
     } catch (err) {
+      console.error('登录失败:', err)
       wx.showToast({
-        title: err.message || '需要登录授权',
+        title: err.message || '登录失败，请重试',
         icon: 'none'
       })
     } finally {
@@ -476,23 +620,145 @@ Page({
     }
   },
 
-  async publishRecord() {
-    if (this.data.isPublishing) return
+  /**
+   * 打开发布确认弹窗
+   */
+  openPublishDialog() {
     if (!this.data.userProfile) {
       this.openLoginDialog()
       return
     }
-    this.setData({ isPublishing: true })
-    try {
-      // TODO: 接入 publishRecord 云函数，传入 bean 数据与用户信息
+    if (!this.data.beanId) {
       wx.showToast({
-        title: '发布功能开发中',
+        title: '请先保存记录',
         icon: 'none'
       })
+      return
+    }
+    this.setData({ showPublishDialog: true })
+  },
+
+  /**
+   * 关闭发布确认弹窗
+   */
+  closePublishDialog() {
+    if (!this.data.isPublishing) {
+      this.setData({ showPublishDialog: false })
+    }
+  },
+
+  /**
+   * 确认发布记录
+   */
+  async publishRecord() {
+    if (this.data.isPublishing) return
+    
+    // 检查登录状态
+    if (!this.data.userProfile) {
+      this.setData({ showPublishDialog: false })
+      this.openLoginDialog()
+      return
+    }
+
+    // 检查是否有记录 ID
+    if (!this.data.beanId) {
+      wx.showToast({
+        title: '请先保存记录',
+        icon: 'none'
+      })
+      this.setData({ showPublishDialog: false })
+      return
+    }
+
+    this.setData({ isPublishing: true })
+
+    try {
+      // 获取当前记录数据
+      const bean = getBeanById(this.data.beanId)
+      if (!bean) {
+        throw new Error('记录不存在')
+      }
+
+      // 获取用户信息
+      const app = getApp()
+      const openId = app.globalData.openId || auth.getStoredOpenId()
+      if (!openId) {
+        throw new Error('未获取到用户信息，请重新登录')
+      }
+
+      // 直接使用当前登录用户的微信昵称和头像
+      if (!this.data.userProfile || !this.data.userProfile.nickName) {
+        throw new Error('用户信息不完整，请重新登录')
+      }
+
+      // 调试：打印发布时使用的用户信息
+      console.log('=== 发布时使用的用户信息 ===')
+      console.log('userProfile:', this.data.userProfile)
+      console.log('nickName:', this.data.userProfile.nickName)
+      console.log('avatarUrl:', this.data.userProfile.avatarUrl)
+      console.log('==========================')
+
+      // 准备发布数据
+      const publishData = {
+        beanId: bean.id,
+        userName: this.data.userProfile.nickName,
+        userAvatar: this.data.userProfile.avatarUrl,
+        beanName: bean.name,
+        brand: bean.brand || '',
+        type: bean.type,
+        roastLevel: bean.roastLevel || '',
+        origin: bean.origin || '',
+        flavorNotes: bean.flavors || bean.flavorScores ? 
+          (bean.type === BEAN_TYPE.POUR_OVER ? bean.flavors : Object.keys(bean.flavorScores || {})) : [],
+        rating: bean.rating || 0,
+        createTime: bean.createdAt || new Date().toISOString()
+      }
+
+      console.log('准备发布数据:', publishData)
+
+      // 调用云函数发布
+      const res = await wx.cloud.callFunction({
+        name: 'publishRecord',
+        data: {
+          beanData: publishData
+        }
+      })
+
+      console.log('云函数 publishRecord 返回:', res)
+
+      // 检查云函数返回结果
+      if (res.errMsg !== 'cloud.callFunction:ok') {
+        throw new Error('云函数调用失败')
+      }
+
+      if (res.result && res.result.success === false) {
+        throw new Error(res.result.error || '发布失败')
+      }
+
+      // 发布成功
+      this.setData({ showPublishDialog: false })
+      wx.showToast({
+        title: '发布成功',
+        icon: 'success',
+        duration: 2000
+      })
+
+      // 提示用户可以在发现页查看
+      setTimeout(() => {
+        wx.showModal({
+          title: '发布成功',
+          content: '你可以在"发现"页看到它',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+      }, 2000)
+
     } catch (err) {
+      console.error('发布失败:', err)
       wx.showToast({
         title: err.message || '发布失败，请稍后重试',
-        icon: 'none'
+        icon: 'none',
+        duration: 2000
       })
     } finally {
       this.setData({ isPublishing: false })

@@ -1,0 +1,74 @@
+<!-- pages/discover/discover.wxml -->
+<!-- 发现页：展示所有用户发布的咖啡豆记录 -->
+<view class="page">
+
+  <!-- 空状态提示 -->
+  <view class="empty-state" wx:if="{{discoverList.length === 0 && !loading}}">
+    <text class="empty-text">还没有人发布豆单，来成为第一个吧 ☕️</text>
+  </view>
+
+  <!-- 发现列表 -->
+  <scroll-view 
+    class="discover-list" 
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+    bindscrolltolower="onLoadMore"
+    enhanced="{{true}}"
+    bounces="{{false}}"
+    show-scrollbar="{{false}}"
+    wx:else
+  >
+    <view class="bean-list">
+      <view class="bean-card" wx:for="{{discoverList}}" wx:key="beanId" bindtap="viewDetail" data-bean="{{item}}">
+        <!-- 图片封面：显示豆袋图片或占位 -->
+        <view class="bean-image-wrapper">
+          <view class="bean-image-placeholder">☕</view>
+          <view class="bean-badge">{{item.type === 'pourOver' ? '手冲' : '意式'}}/{{item.roastLevel}}</view>
+        </view>
+
+        <!-- 内容区 -->
+        <view class="bean-content">
+          <!-- 名称 -->
+          <view class="bean-name">{{item.beanName || '未命名咖啡豆'}}</view>
+          <!-- 品牌 + 评分 -->
+          <view class="brand-rating-row">
+            <view class="bean-brand" wx:if="{{item.brand}}">{{item.brand}}</view>
+            <view class="bean-rating">
+              <text class="star active">★</text>
+              <text class="rating-value">{{item.rating || '0.0'}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="bean-footer">
+          <text class="bean-origin" wx:if="{{item.origin}}">{{item.origin}}</text>
+        </view>
+
+        <!-- 用户信息区域（底部） -->
+        <view class="user-info-header">
+          <image class="user-avatar" src="{{item.userAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="user-info-text">
+            <text class="user-name">{{item.userName || '匿名用户'}}</text>
+            <text class="publish-time">{{item.publishTime || ''}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载更多提示 -->
+    <view class="load-more" wx:if="{{hasMore && !loading}}">
+      <text>加载更多...</text>
+    </view>
+    <view class="load-more" wx:if="{{!hasMore && discoverList.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+  </scroll-view>
+
+  <!-- 加载中提示 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>
+

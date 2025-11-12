@@ -1,0 +1,253 @@
+/* pages/discover/discover.wxss */
+/* 发现页样式：展示所有用户发布的咖啡豆记录 */
+
+/* 页面根元素：确保页面铺满整个屏幕 */
+page {
+  height: 100%;
+  width: 100%;
+  /* ===== 调试模式：取消下面的注释来查看容器边界 ===== */
+  /* border: 4rpx solid red !important; */
+  /* background-color: rgba(255, 0, 0, 0.05) !important; */
+}
+
+.page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(180deg, #f2efeb 0%, #f9f7f5 220rpx, #f9f7f5 100%);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  /* ===== 调试模式：取消下面的注释来查看容器边界 ===== */
+  /* border: 4rpx solid blue !important; */
+  /* background-color: rgba(0, 0, 255, 0.05) !important; */
+}
+
+/* 空状态 */
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #888888;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* 发现列表 */
+.discover-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  padding: 48rpx 32rpx;
+  padding-bottom: 200rpx;
+  box-sizing: border-box;
+  /* ===== 调试模式：取消下面的注释来查看滚动区域边界 ===== */
+  /* border: 4rpx solid green !important; */
+  /* background-color: rgba(0, 255, 0, 0.1) !important; */
+}
+
+/* ===== 列表格栅 ===== */
+.bean-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24rpx 0;
+}
+
+.bean-card {
+  width: calc(50% - 12rpx);
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bean-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
+}
+
+/* ===== 用户信息区域（底部） ===== */
+.user-info-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+  border-top: 1rpx solid #f2efeb;
+  margin-top: auto;
+}
+
+.user-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #f5f3ee;
+  flex-shrink: 0;
+}
+
+.user-info-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 24rpx;
+  color: #333333;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.publish-time {
+  font-size: 20rpx;
+  color: #888888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== 图片区域 ===== */
+.bean-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280rpx;
+  background: linear-gradient(135deg, #f9f7f5 0%, #efe7dd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bean-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bean-image-placeholder {
+  font-size: 80rpx;
+  color: #d6c8b8;
+}
+
+.bean-badge {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  padding: 10rpx 20rpx;
+  background-color: rgba(214, 181, 143, 0.9);
+  color: #ffffff;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+}
+
+/* ===== 内容区域 ===== */
+.bean-content {
+  padding: 28rpx 28rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.bean-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333333;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bean-brand {
+  font-size: 26rpx;
+  color: #888888;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.brand-rating-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.bean-rating {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rpx;
+}
+
+.star {
+  font-size: 24rpx;
+  color: #d0c6ba;
+}
+
+.star.active {
+  color: #d6b58f;
+}
+
+.rating-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #d6b58f;
+}
+
+.bean-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 28rpx 28rpx;
+  border-top: 1rpx solid #f2efeb;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.bean-origin {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 加载更多 */
+.load-more {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 26rpx;
+  color: #888888;
+}
+
+/* 加载中 */
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+  font-size: 28rpx;
+  color: #888888;
+}
+

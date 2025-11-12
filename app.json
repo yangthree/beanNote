@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/discover/discover",
     "pages/detail/detail"
   ],
   "window": {
@@ -9,6 +10,26 @@
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F9F7F5",
     "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#a58e77",
+    "selectedColor": "#8a673b",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "我的豆单",
+        "iconPath": "assets/icon_car_normal.png",
+        "selectedIconPath":"assets/icon_car_selected.png"
+      },
+      {
+        "pagePath": "pages/discover/discover",
+        "text": "发现",
+        "iconPath": "assets/icon_discover_normal.png",
+        "selectedIconPath": "assets/icon_discover_selected.png"
+      }
+    ]
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
