@@ -248,9 +248,17 @@ function searchBeans(keyword = '', filters = {}) {
 
 /**
  * 首页列表（映射视图模型）
+ * 按创建时间倒序排列（最新的在前面）
  */
 function getHomeList(keyword = '', filters = {}) {
-  return searchBeans(keyword, filters).map(mapToHomeCard)
+  const beans = searchBeans(keyword, filters)
+  // 按创建时间倒序排序（最新的在前面）
+  beans.sort((a, b) => {
+    const timeA = new Date(a.createdAt || 0).getTime()
+    const timeB = new Date(b.createdAt || 0).getTime()
+    return timeB - timeA // 倒序：时间大的（新的）在前面
+  })
+  return beans.map(mapToHomeCard)
 }
 
 /**

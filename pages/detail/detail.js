@@ -58,9 +58,9 @@ Page({
     // 备注
     notes: '',
     
-    // 评分
-    rating: 0,
-    ratingText: '0.0',
+    // 评分（不使用0作为默认值，允许为空）
+    rating: null,
+    ratingText: '',
     
     // 封面图
     coverImage: '',
@@ -151,7 +151,7 @@ Page({
       notes: bean.notes || '',
       coverImage: bean.coverImage || ''
     })
-    this.updateRatingState(bean.rating || 0)
+    this.updateRatingState(bean.rating !== undefined && bean.rating !== null ? bean.rating : null)
 
     // 根据类型加载不同的参数
     if (bean.type === BEAN_TYPE.POUR_OVER) {
@@ -243,32 +243,71 @@ Page({
     this.updateRatingState(rating)
   },
 
-  // 手动评分输入处理
+  // 手动评分输入处理（输入时不校验，只更新显示值）
   onManualRatingInput(e) {
     const { value } = e.detail
+    // 输入时只更新显示值，不进行校验
     if (value === '') {
-      this.updateRatingState()
+      this.setData({
+        rating: null,
+        ratingText: ''
+      })
       return
     }
+    
+    // 允许输入数字和小数点，最多一位小数
+    // 只更新显示文本，不进行校验
+    this.setData({
+      ratingText: value
+    })
+  },
 
-    const numberValue = Number(value)
-    if (!Number.isFinite(numberValue)) {
-      wx.showToast({
-        title: '请输入有效的数字',
-        icon: 'none'
+  // 评分输入完成后的校验（失焦时触发）
+  onManualRatingBlur(e) {
+    const { value } = e.detail
+    if (value === '' || value === null || value === undefined) {
+      this.setData({
+        rating: null,
+        ratingText: ''
       })
       return
     }
 
+    // 校验是否为有效数字
+    const numberValue = parseFloat(value)
+    if (isNaN(numberValue) || !Number.isFinite(numberValue)) {
+      wx.showToast({
+        title: '请输入有效的数字',
+        icon: 'none'
+      })
+      // 清空输入
+      this.setData({
+        rating: null,
+        ratingText: ''
+      })
+      return
+    }
+
+    // 校验范围（0-5）
     if (numberValue < 0 || numberValue > 5) {
       wx.showToast({
         title: '评分需在0-5之间',
         icon: 'none'
       })
+      // 清空输入
+      this.setData({
+        rating: null,
+        ratingText: ''
+      })
       return
     }
 
-    this.updateRatingState(numberValue)
+    // 保留一位小数
+    const rounded = Math.round(numberValue * 10) / 10
+    this.setData({
+      rating: rounded,
+      ratingText: rounded.toFixed(1)
+    })
   },
 
   // 输入框绑定方法
@@ -367,7 +406,24 @@ Page({
   },
 
   updateRatingState(value) {
-    const numeric = Number.isFinite(value) ? value : 0
+    // 如果值为空或无效，设置为 null
+    if (value === null || value === undefined || value === '') {
+      this.setData({
+        rating: null,
+        ratingText: ''
+      })
+      return
+    }
+    
+    const numeric = Number.isFinite(value) ? value : null
+    if (numeric === null) {
+      this.setData({
+        rating: null,
+        ratingText: ''
+      })
+      return
+    }
+    
     const clipped = Math.min(5, Math.max(0, numeric))
     const rounded = Math.round(clipped * 10) / 10
     this.setData({
@@ -398,15 +454,29 @@ Page({
     this.setData({ espressoRatio: ratio })
   },
 
-  // 保存记录
-  saveRecord() {
-    // 验证：bean 名称必填
+  /**
+   * 保存记录（用于发布前的自动保存，不跳转页面）
+   * @returns {Object|null} 保存后的 bean 对象，失败返回 null
+   */
+  saveRecordForPublish() {
+    // 验证：豆名必填
     if (!this.data.name.trim()) {
-      wx.showToast({
-        title: '请输入豆名',
-        icon: 'none'
-      })
-      return
+      throw new Error('请输入豆名')
+    }
+    
+    // 验证：品牌必填
+    if (!this.data.brand.trim()) {
+      throw new Error('请输入品牌')
+    }
+    
+    // 验证：评分必填
+    if (this.data.rating === null || this.data.rating === undefined) {
+      throw new Error('请输入评分')
+    }
+    
+    // 验证：烘焙度必填
+    if (!this.data.roastLevel || !this.data.roastLevel.trim()) {
+      throw new Error('请选择烘焙度')
     }
 
     let bean
@@ -421,7 +491,7 @@ Page({
         brewParams: this.data.pourOverParams,
         flavors: this.data.flavors,
         notes: this.data.notes,
-        rating: this.data.rating ? parseFloat(this.data.rating) : 0,
+        rating: this.data.rating !== null && this.data.rating !== undefined ? parseFloat(this.data.rating) : 0,
         coverImage: this.data.coverImage,
         equipment: {
           brewer: this.data.equipmentBrewer,
@@ -440,7 +510,7 @@ Page({
         extractParams: this.data.espressoParams,
         flavorScores: this.data.flavorScores,
         notes: this.data.notes,
-        rating: this.data.rating ? parseFloat(this.data.rating) : 0,
+        rating: this.data.rating !== null && this.data.rating !== undefined ? parseFloat(this.data.rating) : 0,
         coverImage: this.data.coverImage,
         equipment: {
           brewer: this.data.equipmentBrewer,
@@ -452,14 +522,36 @@ Page({
 
     saveBean(bean)
     
-    wx.showToast({
-      title: this.data.isEdit ? '保存成功' : '添加成功',
-      icon: 'success'
-    })
+    // 更新 beanId（如果是新创建的记录）
+    if (!this.data.beanId) {
+      this.setData({ beanId: bean.id, isEdit: true })
+    }
+    
+    return bean
+  },
 
-    setTimeout(() => {
-      wx.navigateBack()
-    }, 1500)
+  // 保存记录
+  saveRecord() {
+    try {
+      // 调用保存方法（包含所有必填项验证）
+      this.saveRecordForPublish()
+      
+      wx.showToast({
+        title: this.data.isEdit ? '保存成功' : '添加成功',
+        icon: 'success'
+      })
+
+      setTimeout(() => {
+        wx.navigateBack()
+      }, 1500)
+    } catch (err) {
+      // 显示验证错误提示
+      wx.showToast({
+        title: err.message || '保存失败，请检查必填项',
+        icon: 'none',
+        duration: 2000
+      })
+    }
   },
 
   openLoginDialog() {
@@ -628,13 +720,7 @@ Page({
       this.openLoginDialog()
       return
     }
-    if (!this.data.beanId) {
-      wx.showToast({
-        title: '请先保存记录',
-        icon: 'none'
-      })
-      return
-    }
+    // 新建和编辑都可以发布，不需要检查 beanId（发布时会自动保存）
     this.setData({ showPublishDialog: true })
   },
 
@@ -660,23 +746,32 @@ Page({
       return
     }
 
-    // 检查是否有记录 ID
-    if (!this.data.beanId) {
-      wx.showToast({
-        title: '请先保存记录',
-        icon: 'none'
-      })
-      this.setData({ showPublishDialog: false })
-      return
-    }
-
     this.setData({ isPublishing: true })
 
     try {
-      // 获取当前记录数据
-      const bean = getBeanById(this.data.beanId)
-      if (!bean) {
-        throw new Error('记录不存在')
+      // 检查是否有记录 ID，如果没有则先保存到本地豆单
+      let bean
+      if (!this.data.beanId) {
+        // 先保存到本地豆单
+        this.saveRecordForPublish()
+        // 等待保存完成，获取保存后的 beanId
+        await new Promise(resolve => setTimeout(resolve, 100))
+        bean = getBeanById(this.data.beanId)
+        if (!bean) {
+          throw new Error('保存记录失败，请重试')
+        }
+      } else {
+        // 获取当前记录数据
+        bean = getBeanById(this.data.beanId)
+        if (!bean) {
+          // 如果记录不存在，重新保存
+          this.saveRecordForPublish()
+          await new Promise(resolve => setTimeout(resolve, 100))
+          bean = getBeanById(this.data.beanId)
+          if (!bean) {
+            throw new Error('记录不存在，已尝试重新保存')
+          }
+        }
       }
 
       // 获取用户信息
@@ -710,7 +805,7 @@ Page({
         origin: bean.origin || '',
         flavorNotes: bean.flavors || bean.flavorScores ? 
           (bean.type === BEAN_TYPE.POUR_OVER ? bean.flavors : Object.keys(bean.flavorScores || {})) : [],
-        rating: bean.rating || 0,
+        rating: bean.rating !== undefined && bean.rating !== null ? bean.rating : 0,
         createTime: bean.createdAt || new Date().toISOString()
       }
 
@@ -737,21 +832,14 @@ Page({
 
       // 发布成功
       this.setData({ showPublishDialog: false })
-      wx.showToast({
-        title: '发布成功',
-        icon: 'success',
-        duration: 2000
-      })
-
+      
       // 提示用户可以在发现页查看
-      setTimeout(() => {
-        wx.showModal({
-          title: '发布成功',
-          content: '你可以在"发现"页看到它',
-          showCancel: false,
-          confirmText: '知道了'
-        })
-      }, 2000)
+      wx.showModal({
+        title: '发布成功',
+        content: '你可以在"发现"页看到它',
+        showCancel: false,
+        confirmText: '知道了'
+      })
 
     } catch (err) {
       console.error('发布失败:', err)

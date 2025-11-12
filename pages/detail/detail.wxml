@@ -26,8 +26,8 @@
     >意式豆</view>
   </view>
 
-  <!-- 右上角发布按钮 -->
-  <view class="publish-btn" bindtap="openPublishDialog" wx:if="{{isEdit && beanId}}">
+  <!-- 右上角发布按钮（新建和编辑都显示） -->
+  <view class="publish-btn" bindtap="openPublishDialog">
     <text class="publish-icon">☁</text>
   </view>
 
@@ -51,7 +51,7 @@
           />
         </view>
         <view class="form-item">
-          <text class="form-label">品牌</text>
+          <text class="form-label">品牌 *</text>
           <input class="form-input"
             placeholder="如：Manner"
             value="{{brand}}"
@@ -59,16 +59,17 @@
           />
         </view>
         <view class="form-item">
-          <text class="form-label">评分 (1-5)</text>
+          <text class="form-label">评分 (0-5) *</text>
           <input class="form-input"
-            type="number"
+            type="digit"
             placeholder="如：4.5"
-            value="{{rating}}"
+            value="{{ratingText}}"
             bindinput="onManualRatingInput"
+            bindblur="onManualRatingBlur"
           />
         </view>
         <view class="form-item picker-item">
-          <text class="form-label">烘焙度</text>
+          <text class="form-label">烘焙度 *</text>
           <picker mode="selector"
             range="{{roastLevels}}"
             value="{{roastLevelIndex}}"

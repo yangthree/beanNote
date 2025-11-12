@@ -50,13 +50,8 @@ page {
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 100%;
-  padding: 48rpx 32rpx;
-  padding-bottom: 200rpx;
+  padding: 48rpx 32rpx 0rpx ;
   box-sizing: border-box;
-  /* ===== 调试模式：取消下面的注释来查看滚动区域边界 ===== */
-  /* border: 4rpx solid green !important; */
-  /* background-color: rgba(0, 255, 0, 0.1) !important; */
 }
 
 /* ===== 列表格栅 ===== */
