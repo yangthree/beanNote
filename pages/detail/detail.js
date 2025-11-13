@@ -915,14 +915,19 @@ Page({
 
       // 发布成功
       this.setData({ showPublishDialog: false })
-      
-      // 提示用户可以在发现页查看
-      wx.showModal({
+
+      // 标记发现页需要刷新，并切换过去
+      wx.setStorageSync('discoverNeedRefresh', true)
+      wx.showToast({
         title: '发布成功',
-        content: '你可以在"发现"页看到它',
-        showCancel: false,
-        confirmText: '知道了'
+        icon: 'success',
+        duration: 1000
       })
+      setTimeout(() => {
+        wx.switchTab({
+          url: '/pages/discover/discover'
+        })
+      }, 600)
 
     } catch (err) {
       console.error('发布失败:', err)

@@ -34,6 +34,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    const needRefresh = wx.getStorageSync('discoverNeedRefresh')
+    if (needRefresh) {
+      wx.removeStorageSync('discoverNeedRefresh')
+      this.onRefresh()
+      return
+    }
     // 如果列表为空，则加载数据（避免每次显示都刷新）
     if (this.data.discoverList.length === 0) {
       this.loadDiscoverList()

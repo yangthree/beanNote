@@ -413,45 +413,55 @@
 
 /* 头像选择按钮 */
 .avatar-btn {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 50%;
-  border: 2rpx dashed #d6b58f;
-  background-color: #f9f7f5;
+  display: flex; 
+  align-items: center;
+  gap: 20rpx;
   padding: 0;
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  background-color: transparent;
+  border: none;
 }
 
 .avatar-btn::after {
   border: none;
 }
 
+.avatar-preview-wrapper {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 60rpx;
+  overflow: hidden;
+  background-color: #f9f7f5;
+  border: 2rpx dashed #d6b58f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .avatar-preview {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 60rpx;
 }
 
 .avatar-placeholder {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
+  background-color: rgba(214, 181, 143, 0.16);
+  color: #8a673b;
 }
 
 .avatar-icon {
-  font-size: 48rpx;
-  color: #d6b58f;
+  font-size: 30rpx;
 }
 
 .avatar-text {
-  font-size: 22rpx;
-  color: #888888;
+  font-size: 24rpx;
+  color: #8a673b;
 }
 
 /* 昵称输入框 */

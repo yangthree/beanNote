@@ -411,11 +411,13 @@
         <view class="avatar-section">
           <text class="form-label">头像</text>
           <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-            <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
-            <view wx:else class="avatar-placeholder">
-              <text class="avatar-icon">👤</text>
-              <text class="avatar-text">点击选择头像</text>
+            <view class="avatar-preview-wrapper">
+              <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
+              <view wx:else class="avatar-placeholder">
+                <text class="avatar-icon">👤</text>
+              </view>
             </view>
+            <text class="avatar-text">点击选择头像</text>
           </button>
         </view>
         
