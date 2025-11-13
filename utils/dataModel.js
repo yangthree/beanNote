@@ -53,6 +53,11 @@ function createBaseRecord(payload = {}) {
     brand: payload.brand || '',
     roastLevel: payload.roastLevel || '',
     origin: payload.origin || '',
+    altitude: payload.altitude !== undefined && payload.altitude !== null
+      ? String(payload.altitude).replace(/[^0-9.]/g, '')
+      : '',
+    processMethod: payload.processMethod || '',
+    roastDate: payload.roastDate || '',
     rating: typeof payload.rating === 'number' ? payload.rating : 0,
     flavors: Array.isArray(payload.flavors) ? payload.flavors : [],
     notes: payload.notes || '',
@@ -83,6 +88,12 @@ function createPourOverRecord(payload = {}) {
       temperature: normalizeNumber(payload.brewParams?.temperature),
       time: normalizeNumber(payload.brewParams?.time),
       grindSize: payload.brewParams?.grindSize || ''
+    },
+    flavorScores: {
+      aroma: normalizeNumber(payload.flavorScores?.aroma),
+      acidity: normalizeNumber(payload.flavorScores?.acidity),
+      sweetness: normalizeNumber(payload.flavorScores?.sweetness),
+      balance: normalizeNumber(payload.flavorScores?.balance)
     }
   }
 }
@@ -106,10 +117,10 @@ function createEspressoRecord(payload = {}) {
       grindSize: payload.extractParams?.grindSize || ''
     },
     flavorScores: {
-      bitterness: normalizeNumber(payload.flavorScores?.bitterness),
-      acidity: normalizeNumber(payload.flavorScores?.acidity),
-      balance: normalizeNumber(payload.flavorScores?.balance),
-      body: normalizeNumber(payload.flavorScores?.body)
+      aroma: normalizeNumber(payload.flavorScores?.aroma),
+      body: normalizeNumber(payload.flavorScores?.body),
+      sweetness: normalizeNumber(payload.flavorScores?.sweetness),
+      balance: normalizeNumber(payload.flavorScores?.balance)
     }
   }
 }

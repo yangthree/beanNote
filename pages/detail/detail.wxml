@@ -79,13 +79,45 @@
             </view>
           </picker>
         </view>
-        <view class="form-item full">
+        <view class="form-item">
           <text class="form-label">产地</text>
           <input class="form-input"
             placeholder="如：埃塞俄比亚"
             value="{{origin}}"
             bindinput="onOriginInput"
           />
+        </view>
+        <view class="form-item">
+          <text class="form-label">海拔 (m)</text>
+          <view class="input-with-unit">
+            <input class="form-input"
+              type="digit"
+              placeholder="如：1900"
+              value="{{altitude}}"
+              bindinput="onAltitudeInput"
+            />
+            <text class="unit">m</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">处理法</text>
+          <input class="form-input"
+            placeholder="如：水洗 / 日晒"
+            value="{{processMethod}}"
+            bindinput="onProcessMethodInput"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">烘焙日期</text>
+          <picker mode="date"
+            value="{{roastDate}}"
+            start="2010-01-01"
+            end="2099-12-31"
+            bindchange="onRoastDateChange">
+            <view class="form-input picker-display">
+              {{roastDate || '选择日期'}}
+            </view>
+          </picker>
         </view>
       </view>
     </view>
@@ -157,6 +189,56 @@
         <view class="ratio-card">
           <text class="ratio-label">萃取比例</text>
           <text class="ratio-value">1 : {{pourOverRatio || '--'}}</text>
+        </view>
+      </view>
+
+      <view class="score-card">
+        <text class="form-label">风味评分</text>
+        <view class="score-group">
+          <view class="score-item">
+            <text class="score-label">香气</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.aroma >= item ? 'active' : ''}}"
+                data-key="aroma"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">酸质</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.acidity >= item ? 'active' : ''}}"
+                data-key="acidity"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">甜感</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.sweetness >= item ? 'active' : ''}}"
+                data-key="sweetness"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">平衡感</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.balance >= item ? 'active' : ''}}"
+                data-key="balance"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -235,22 +317,33 @@
         <text class="form-label">风味评分</text>
         <view class="score-group">
           <view class="score-item">
-            <text class="score-label">苦味</text>
+            <text class="score-label">香气</text>
             <view class="score-stars">
               <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.bitterness >= item ? 'active' : ''}}"
-                data-key="bitterness"
+                class="star {{flavorScores.aroma >= item ? 'active' : ''}}"
+                data-key="aroma"
                 data-value="{{item}}"
                 bindtap="setFlavorScore"
               >★</text>
             </view>
           </view>
           <view class="score-item">
-            <text class="score-label">酸度</text>
+            <text class="score-label">醇厚度</text>
             <view class="score-stars">
               <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.acidity >= item ? 'active' : ''}}"
-                data-key="acidity"
+                class="star {{flavorScores.body >= item ? 'active' : ''}}"
+                data-key="body"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">甜感</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.sweetness >= item ? 'active' : ''}}"
+                data-key="sweetness"
                 data-value="{{item}}"
                 bindtap="setFlavorScore"
               >★</text>
@@ -262,17 +355,6 @@
               <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
                 class="star {{flavorScores.balance >= item ? 'active' : ''}}"
                 data-key="balance"
-                data-value="{{item}}"
-                bindtap="setFlavorScore"
-              >★</text>
-            </view>
-          </view>
-          <view class="score-item">
-            <text class="score-label">厚度</text>
-            <view class="score-stars">
-              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.body >= item ? 'active' : ''}}"
-                data-key="body"
                 data-value="{{item}}"
                 bindtap="setFlavorScore"
               >★</text>

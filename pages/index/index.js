@@ -8,6 +8,7 @@ Page({
     coffeeBeans: [],        // 首页展示的咖啡豆卡片列表（已经映射为视图模型）
     searchKeyword: '',      // 搜索关键字（双向绑定搜索框）
     showEmpty: false,       // 是否展示空状态
+    filterType: 'all',      // 筛选类型：'all' / 'pourOver' / 'espresso'
     filters: {              // 预留的筛选条件，当前版本仅使用 keyword
       type: '',             // pourOver / espresso / '' — 类型筛选
       brand: '',
@@ -16,13 +17,39 @@ Page({
   },
 
   onLoad() {
-    // 初次加载页时拉取数据
-    this.loadCoffeeBeans()
+    // 从本地存储读取上次的筛选状态
+    const savedFilterType = wx.getStorageSync('filterType')
+    if (savedFilterType && ['all', 'pourOver', 'espresso'].includes(savedFilterType)) {
+      this.setData({ filterType: savedFilterType }, () => {
+        this.updateFilters()
+        this.loadCoffeeBeans()
+      })
+    } else {
+      // 初次加载页时拉取数据
+      this.loadCoffeeBeans()
+    }
   },
 
   onShow() {
     // 从详情页返回时刷新列表，保持数据同步
+    // 确保筛选条件已更新
+    this.updateFilters()
     this.loadCoffeeBeans()
+  },
+
+  /**
+   * 更新筛选条件
+   * 根据 filterType 更新 filters.type
+   */
+  updateFilters() {
+    const { filterType } = this.data
+    const typeFilter = filterType === 'all' ? '' : filterType
+    this.setData({
+      filters: {
+        ...this.data.filters,
+        type: typeFilter
+      }
+    })
   },
 
   /**
@@ -38,6 +65,25 @@ Page({
     this.setData({
       coffeeBeans: beans,
       showEmpty: beans.length === 0
+    })
+  },
+
+  /**
+   * 筛选类型切换事件
+   * @param {Object} e - 事件对象，包含 data-type
+   */
+  onFilterTypeChange(e) {
+    const { type } = e.currentTarget.dataset
+    if (!type || type === this.data.filterType) return
+
+    // 更新筛选类型
+    this.setData({ filterType: type }, () => {
+      // 更新筛选条件
+      this.updateFilters()
+      // 保存到本地存储
+      wx.setStorageSync('filterType', type)
+      // 重新加载数据
+      this.loadCoffeeBeans()
     })
   },
 

@@ -10,20 +10,35 @@ cloud.init({
  */
 exports.main = async (event, context) => {
   try {
-    const { page = 1, pageSize = 10 } = event
+    const { page = 1, pageSize = 10, filterType = 'all' } = event
 
     console.log('云函数 getDiscoverList 被调用')
-    console.log('参数:', { page, pageSize })
+    console.log('参数:', { page, pageSize, filterType })
 
     // 获取数据库引用
     const db = cloud.database()
     const publishRecordsCollection = db.collection('publish_records')
 
+    // 构建查询条件
+    let query = publishRecordsCollection
+    
+    // 根据 filterType 添加筛选条件
+    if (filterType === 'pourOver') {
+      query = query.where({
+        type: 'Pour Over'
+      })
+    } else if (filterType === 'espresso') {
+      query = query.where({
+        type: 'Espresso'
+      })
+    }
+    // filterType === 'all' 时不添加筛选条件
+
     // 计算跳过的记录数
     const skip = (page - 1) * pageSize
 
     // 查询数据：按 publishTime 倒序排列，分页获取
-    const result = await publishRecordsCollection
+    const result = await query
       .orderBy('publishTime', 'desc')
       .skip(skip)
       .limit(pageSize)

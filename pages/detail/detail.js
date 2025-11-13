@@ -22,6 +22,9 @@ Page({
     brand: '',
     roastLevel: '',
     origin: '',
+    altitude: '',
+    processMethod: '',
+    roastDate: '',
     
     // 手冲参数
     pourOverParams: {
@@ -48,8 +51,9 @@ Page({
     
     // 意式风味评分
     flavorScores: {
-      bitterness: 0,
+      aroma: 0,
       acidity: 0,
+      sweetness: 0,
       balance: 0,
       body: 0
     },
@@ -77,6 +81,51 @@ Page({
     // 选项数据
     roastLevels: ROAST_LEVELS,
     roastLevelIndex: 0
+  },
+
+  normalizeFlavorScores(rawScores = {}, type) {
+    const toNumber = (value) => {
+      const num = Number(value)
+      return Number.isFinite(num) ? num : 0
+    }
+    if (type === BEAN_TYPE.POUR_OVER) {
+      return {
+        aroma: toNumber(rawScores.aroma ?? rawScores.bitterness),
+        acidity: toNumber(rawScores.acidity),
+        sweetness: toNumber(rawScores.sweetness),
+        balance: toNumber(rawScores.balance ?? rawScores.body),
+        body: 0
+      }
+    }
+    // ESPRESSO
+    return {
+      aroma: toNumber(rawScores.aroma ?? rawScores.bitterness),
+      body: toNumber(rawScores.body),
+      sweetness: toNumber(rawScores.sweetness),
+      balance: toNumber(rawScores.balance),
+      acidity: toNumber(rawScores.acidity)
+    }
+  },
+
+  prepareFlavorScoresForType(scores = {}, type) {
+    const toNumber = (value) => {
+      const num = Number(value)
+      return Number.isFinite(num) ? num : 0
+    }
+    if (type === BEAN_TYPE.POUR_OVER) {
+      return {
+        aroma: toNumber(scores.aroma),
+        acidity: toNumber(scores.acidity),
+        sweetness: toNumber(scores.sweetness),
+        balance: toNumber(scores.balance)
+      }
+    }
+    return {
+      aroma: toNumber(scores.aroma),
+      body: toNumber(scores.body),
+      sweetness: toNumber(scores.sweetness),
+      balance: toNumber(scores.balance)
+    }
   },
 
   onLoad(options) {
@@ -148,6 +197,11 @@ Page({
       roastLevel: bean.roastLevel || '',
       roastLevelIndex: roastLevelIndex >= 0 ? roastLevelIndex : 0,
       origin: bean.origin || '',
+      altitude: bean.altitude !== undefined && bean.altitude !== null
+        ? String(bean.altitude).replace(/[^0-9.]/g, '')
+        : '',
+      processMethod: bean.processMethod || '',
+      roastDate: bean.roastDate || '',
       notes: bean.notes || '',
       coverImage: bean.coverImage || ''
     })
@@ -155,15 +209,21 @@ Page({
 
     // 根据类型加载不同的参数
     if (bean.type === BEAN_TYPE.POUR_OVER) {
+      const normalizedScores = this.normalizeFlavorScores(bean.flavorScores, BEAN_TYPE.POUR_OVER)
+      console.log('[Detail] 手冲记录加载评分:', normalizedScores)
       this.setData({
         pourOverParams: bean.brewParams || {},
-        flavors: bean.flavors || []
+        flavors: bean.flavors || [],
+        flavorScores: normalizedScores
       })
       this.updatePourOverRatio()
     } else {
+      const normalizedScores = this.normalizeFlavorScores(bean.flavorScores, BEAN_TYPE.ESPRESSO)
+      console.log('[Detail] 意式记录加载评分:', normalizedScores)
       this.setData({
         espressoParams: bean.extractParams || {},
-        flavorScores: bean.flavorScores || {}
+        flavors: bean.flavors || [],
+        flavorScores: normalizedScores
       })
       this.updateEspressoRatio()
     }
@@ -187,7 +247,9 @@ Page({
   selectType(e) {
     const type = e.currentTarget.dataset.type
     if (!type || type === this.data.beanType) return
-    this.setData({ beanType: type }, () => {
+    const resetScores = this.normalizeFlavorScores({}, type)
+    console.log('[Detail] 切换豆型:', type, '重置评分为:', resetScores)
+    this.setData({ beanType: type, flavorScores: resetScores }, () => {
       if (type === BEAN_TYPE.POUR_OVER) {
         this.updatePourOverRatio()
       } else {
@@ -199,6 +261,7 @@ Page({
   // 添加风味标签
   addFlavor(e) {
     const flavor = e.detail.value.trim()
+    console.log('[Detail] addFlavor input:', flavor)
     if (!flavor) return
     
     const flavors = [...this.data.flavors]
@@ -331,6 +394,22 @@ Page({
     this.setData({ origin: e.detail.value })
   },
 
+  onAltitudeInput(e) {
+    // 只保留数字和小数点
+    const raw = e.detail.value || ''
+    const sanitized = raw.replace(/[^0-9.]/g, '')
+    this.setData({ altitude: sanitized })
+  },
+
+  onProcessMethodInput(e) {
+    this.setData({ processMethod: e.detail.value })
+  },
+
+  onRoastDateChange(e) {
+    const value = e.detail.value
+    this.setData({ roastDate: value })
+  },
+
   onNotesInput(e) {
     this.setData({ notes: e.detail.value })
   },
@@ -459,6 +538,7 @@ Page({
    * @returns {Object|null} 保存后的 bean 对象，失败返回 null
    */
   saveRecordForPublish() {
+    console.log('[Detail] 开始保存记录，当前豆型:', this.data.beanType)
     // 验证：豆名必填
     if (!this.data.name.trim()) {
       throw new Error('请输入豆名')
@@ -479,6 +559,10 @@ Page({
       throw new Error('请选择烘焙度')
     }
 
+    const flavorScoresForSave = this.prepareFlavorScoresForType(this.data.flavorScores, this.data.beanType)
+    console.log('[Detail] 准备保存评分:', flavorScoresForSave)
+    console.log('[Detail] 准备保存风味标签:', this.data.flavors)
+
     let bean
     if (this.data.beanType === BEAN_TYPE.POUR_OVER) {
       // 手冲记录模型
@@ -488,7 +572,11 @@ Page({
         brand: this.data.brand,
         roastLevel: this.data.roastLevel,
         origin: this.data.origin,
+        altitude: this.data.altitude || '',
+        processMethod: this.data.processMethod,
+        roastDate: this.data.roastDate,
         brewParams: this.data.pourOverParams,
+        flavorScores: flavorScoresForSave,
         flavors: this.data.flavors,
         notes: this.data.notes,
         rating: this.data.rating !== null && this.data.rating !== undefined ? parseFloat(this.data.rating) : 0,
@@ -507,8 +595,12 @@ Page({
         brand: this.data.brand,
         roastLevel: this.data.roastLevel,
         origin: this.data.origin,
+        altitude: this.data.altitude || '',
+        processMethod: this.data.processMethod,
+        roastDate: this.data.roastDate,
         extractParams: this.data.espressoParams,
-        flavorScores: this.data.flavorScores,
+        flavorScores: flavorScoresForSave,
+        flavors: this.data.flavors,
         notes: this.data.notes,
         rating: this.data.rating !== null && this.data.rating !== undefined ? parseFloat(this.data.rating) : 0,
         coverImage: this.data.coverImage,
@@ -749,29 +841,17 @@ Page({
     this.setData({ isPublishing: true })
 
     try {
-      // 检查是否有记录 ID，如果没有则先保存到本地豆单
-      let bean
-      if (!this.data.beanId) {
-        // 先保存到本地豆单
-        this.saveRecordForPublish()
-        // 等待保存完成，获取保存后的 beanId
-        await new Promise(resolve => setTimeout(resolve, 100))
-        bean = getBeanById(this.data.beanId)
-        if (!bean) {
-          throw new Error('保存记录失败，请重试')
-        }
-      } else {
-        // 获取当前记录数据
-        bean = getBeanById(this.data.beanId)
-        if (!bean) {
-          // 如果记录不存在，重新保存
-          this.saveRecordForPublish()
-          await new Promise(resolve => setTimeout(resolve, 100))
-          bean = getBeanById(this.data.beanId)
-          if (!bean) {
-            throw new Error('记录不存在，已尝试重新保存')
-          }
-        }
+      // 无论是否有记录 ID，都先保存当前表单数据到本地豆单
+      // 这样可以确保发布的是最新的数据
+      this.saveRecordForPublish()
+      
+      // 等待保存完成，获取保存后的 beanId
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // 获取保存后的 bean 数据
+      const bean = getBeanById(this.data.beanId)
+      if (!bean) {
+        throw new Error('保存记录失败，请重试')
       }
 
       // 获取用户信息
@@ -803,6 +883,9 @@ Page({
         type: bean.type,
         roastLevel: bean.roastLevel || '',
         origin: bean.origin || '',
+        altitude: bean.altitude || '',
+        processMethod: bean.processMethod || '',
+        roastDate: bean.roastDate || '',
         flavorNotes: bean.flavors || bean.flavorScores ? 
           (bean.type === BEAN_TYPE.POUR_OVER ? bean.flavors : Object.keys(bean.flavorScores || {})) : [],
         rating: bean.rating !== undefined && bean.rating !== null ? bean.rating : 0,

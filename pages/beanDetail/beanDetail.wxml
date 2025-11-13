@@ -1,0 +1,261 @@
+<!-- pages/beanDetail/beanDetail.wxml -->
+<!-- 豆子详情页（只读模式）：展示咖啡豆的完整信息 -->
+<view class="page">
+  <!-- 加载中状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 内容区域 -->
+  <scroll-view 
+    class="content-scroll" 
+    scroll-y="{{true}}"
+    enhanced="{{true}}"
+    bounces="{{false}}"
+    show-scrollbar="{{false}}"
+    wx:else
+  >
+    <!-- 顶部分享按钮 -->
+    <view class="share-float" bindtap="onShare">
+      <text class="share-icon">⋯</text>
+    </view>
+
+    <!-- 咖啡豆封面图 -->
+    <view class="cover-section">
+      <view class="cover-image-wrapper">
+        <image 
+          wx:if="{{displayData.coverImage}}"
+          class="cover-image"
+          src="{{displayData.coverImage}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+        />
+        <view wx:else class="cover-placeholder">
+          <text class="cover-icon">☕</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 标题区（名称 + 产区） -->
+    <view class="title-section">
+      <view class="bean-name">{{displayData.name}}</view>
+      <view class="bean-origin" wx:if="{{displayData.origin}}">{{displayData.origin}}</view>
+    </view>
+
+    <!-- 标签模块（风味标签） -->
+    <view class="tags-section" wx:if="{{displayData.flavors.length > 0}}">
+      <view class="flavor-tags">
+        <view 
+          class="flavor-tag" 
+          wx:for="{{displayData.flavors}}" 
+          wx:key="*this"
+          wx:for-item="tag"
+          wx:for-index="tagIndex"
+        >
+          {{tag}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 基础信息卡片 -->
+    <view class="info-card">
+      <view class="card-title">基础信息</view>
+      <view class="info-grid">
+        <view class="info-item" wx:if="{{displayData.ratingText}}">
+          <text class="info-label">评分</text>
+          <text class="info-value">{{displayData.ratingText}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.roastLevel}}">
+          <text class="info-label">烘焙度</text>
+          <text class="info-value">{{displayData.roastLevel}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.origin}}">
+          <text class="info-label">产地</text>
+          <text class="info-value">{{displayData.origin}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.altitude}}">
+          <text class="info-label">海拔</text>
+          <text class="info-value">{{displayData.altitude}}m</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.processMethod}}">
+          <text class="info-label">处理法</text>
+          <text class="info-value">{{displayData.processMethod}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.roastDate}}">
+          <text class="info-label">烘焙日期</text>
+          <text class="info-value">{{displayData.roastDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 冲煮参数卡片 -->
+    <view class="info-card" wx:if="{{displayData.type === 'pourOver' && displayData.brewParams}}">
+      <view class="card-title">冲煮参数</view>
+      <view class="info-grid">
+        <view class="info-item" wx:if="{{displayData.brewParams.temperature}}">
+          <text class="info-label">水温</text>
+          <text class="info-value">{{displayData.brewParams.temperature}}°C</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.brewParams.grindSize}}">
+          <text class="info-label">研磨度</text>
+          <text class="info-value">{{displayData.brewParams.grindSize}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.brewParams.time}}">
+          <text class="info-label">时间</text>
+          <text class="info-value">{{displayData.brewParams.time}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 意式参数卡片 -->
+    <view class="info-card" wx:if="{{displayData.type === 'espresso' && displayData.extractParams}}">
+      <view class="card-title">萃取参数</view>
+      <view class="info-grid">
+        <view class="info-item" wx:if="{{displayData.extractParams.coffeeWeight}}">
+          <text class="info-label">粉量</text>
+          <text class="info-value">{{displayData.extractParams.coffeeWeight}}g</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.extractParams.outputWeight}}">
+          <text class="info-label">液体量</text>
+          <text class="info-value">{{displayData.extractParams.outputWeight}}g</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.extractParams.temperature}}">
+          <text class="info-label">水温</text>
+          <text class="info-value">{{displayData.extractParams.temperature}}°C</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.extractParams.time}}">
+          <text class="info-label">萃取时间</text>
+          <text class="info-value">{{displayData.extractParams.time}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.extractParams.machine}}">
+          <text class="info-label">咖啡机</text>
+          <text class="info-value">{{displayData.extractParams.machine}}</text>
+        </view>
+        <view class="info-item" wx:if="{{displayData.extractParams.grindSize}}">
+          <text class="info-label">研磨度</text>
+          <text class="info-value">{{displayData.extractParams.grindSize}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 风味评分卡片 -->
+    <view class="info-card" wx:if="{{displayData.flavorScores}}">
+      <view class="card-title">风味评分</view>
+      <view class="score-list" wx:if="{{displayData.type === 'pourOver'}}">
+        <view class="score-item" wx:if="{{displayData.flavorScores.aroma > 0}}">
+          <text class="score-label">香气</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.aroma >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.acidity > 0}}">
+          <text class="score-label">酸质</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.acidity >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.sweetness > 0}}">
+          <text class="score-label">甜感</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.sweetness >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.balance > 0}}">
+          <text class="score-label">平衡感</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.balance >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+      </view>
+      <view class="score-list" wx:elif="{{displayData.type === 'espresso'}}">
+        <view class="score-item" wx:if="{{displayData.flavorScores.aroma > 0}}">
+          <text class="score-label">香气</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.aroma >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.body > 0}}">
+          <text class="score-label">醇厚度</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.body >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.sweetness > 0}}">
+          <text class="score-label">甜感</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.sweetness >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+        <view class="score-item" wx:if="{{displayData.flavorScores.balance > 0}}">
+          <text class="score-label">平衡感</text>
+          <view class="score-stars">
+            <text 
+              class="star {{displayData.flavorScores.balance >= item ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}" 
+              wx:key="*this"
+              wx:for-item="item"
+            >★</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 我的笔记模块 -->
+    <view class="info-card" wx:if="{{displayData.notes}}">
+      <view class="card-title">我的笔记</view>
+      <view class="notes-content">{{displayData.notes}}</view>
+    </view>
+
+    <!-- 发布信息 -->
+    <view class="publish-info" wx:if="{{displayData.userName || displayData.publishTime}}">
+      <view class="publish-user" wx:if="{{displayData.userName}}">
+        <image 
+          class="publish-avatar" 
+          src="{{displayData.userAvatar}}" 
+          mode="aspectFill"
+          wx:if="{{displayData.userAvatar}}"
+        />
+        <text class="publish-name">{{displayData.userName}}</text>
+      </view>
+      <text class="publish-time" wx:if="{{displayData.publishTime}}">发布于 {{displayData.publishTime}}</text>
+    </view>
+
+    <!-- 底部留白 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+</view>

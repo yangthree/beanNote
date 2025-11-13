@@ -2,6 +2,31 @@
 <!-- 发现页：展示所有用户发布的咖啡豆记录 -->
 <view class="page">
 
+  <!-- 筛选控件（Segmented Control） -->
+  <view class="filter-container">
+    <view 
+      class="filter-item {{filterType === 'all' ? 'active' : ''}}"
+      data-type="all"
+      bindtap="onFilterTypeChange"
+    >
+      全部
+    </view>
+    <view 
+      class="filter-item {{filterType === 'pourOver' ? 'active' : ''}}"
+      data-type="pourOver"
+      bindtap="onFilterTypeChange"
+    >
+      手冲
+    </view>
+    <view 
+      class="filter-item {{filterType === 'espresso' ? 'active' : ''}}"
+      data-type="espresso"
+      bindtap="onFilterTypeChange"
+    >
+      意式
+    </view>
+  </view>
+
   <!-- 空状态提示 -->
   <view class="empty-state" wx:if="{{discoverList.length === 0 && !loading}}">
     <text class="empty-text">还没有人发布豆单，来成为第一个吧 ☕️</text>
@@ -21,7 +46,7 @@
     wx:else
   >
     <view class="bean-list">
-      <view class="bean-card" wx:for="{{discoverList}}" wx:key="beanId" bindtap="viewDetail" data-bean="{{item}}">
+      <view class="bean-card" wx:for="{{discoverList}}" wx:key="beanId" wx:for-item="item" wx:for-index="index" bindtap="viewDetail" data-bean="{{item}}" data-record-id="{{item._id}}">
         <!-- 图片封面：显示豆袋图片或占位 -->
         <view class="bean-image-wrapper">
           <view class="bean-image-placeholder">☕</view>
@@ -30,28 +55,34 @@
 
         <!-- 内容区 -->
         <view class="bean-content">
-          <!-- 名称 -->
-          <view class="bean-name">{{item.beanName || '未命名咖啡豆'}}</view>
-          <!-- 品牌 + 评分 -->
-          <view class="brand-rating-row">
-            <view class="bean-brand" wx:if="{{item.brand}}">{{item.brand}}</view>
+          <!-- 第一行：豆名 + 品牌 -->
+          <view class="bean-title-row">
+            <text class="bean-name">{{item.beanName || '未命名咖啡豆'}}</text>
+            <text class="bean-brand" wx:if="{{item.brand}}">{{item.brand}}</text>
+          </view>
+
+          <!-- 第二行：产地 + 评分 -->
+          <view class="bean-info-row">
+            <text class="bean-origin" wx:if="{{item.origin}}">{{item.origin}}</text>
             <view class="bean-rating">
               <text class="star active">★</text>
-              <text class="rating-value">{{item.rating || '0.0'}}</text>
+              <text class="rating-value">{{item.displayRating}}</text>
             </view>
           </view>
-        </view>
 
-        <view class="bean-footer">
-          <text class="bean-origin" wx:if="{{item.origin}}">{{item.origin}}</text>
+          <!-- 第三行：处理法 + 右侧预留 -->
+          <view class="bean-info-row">
+            <text class="bean-process" wx:if="{{item.processMethod}}">{{item.processMethod}}</text>
+            <view class="bean-extra-placeholder"></view>
+          </view>
         </view>
 
         <!-- 用户信息区域（底部） -->
         <view class="user-info-header">
-          <image class="user-avatar" src="{{item.userAvatar || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <image class="user-avatar" src="{{item.userAvatar}}" mode="aspectFill" lazy-load="{{true}}"></image>
           <view class="user-info-text">
-            <text class="user-name">{{item.userName || '匿名用户'}}</text>
-            <text class="publish-time">{{item.publishTime || ''}}</text>
+            <text class="user-name">{{item.userName}}</text>
+            <text class="publish-time">{{item.publishTime}}</text>
           </view>
         </view>
       </view>

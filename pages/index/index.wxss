@@ -58,6 +58,35 @@
   border-color: #d6b58f;
 }
 
+/* ===== 筛选控件 ===== */
+.filter-container {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 40rpx;
+  padding: 8rpx;
+  background-color: #f5f3ee;
+  border-radius: 24rpx;
+}
+
+.filter-item {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #888888;
+  border-radius: 16rpx;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.filter-item.active {
+  background-color: #ffffff;
+  color: #8a673b;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
 /* ===== 空态 ===== */
 .empty-state {
   padding: 120rpx 32rpx;
@@ -138,14 +167,22 @@
 
 /* ===== 内容区域 ===== */
 .bean-content {
-  padding: 28rpx 28rpx 24rpx;
+  padding: 28rpx;
   display: flex;
   flex-direction: column;
   gap: 16rpx;
   flex: 1;
 }
 
+.bean-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
 .bean-name {
+  flex: 1;
   font-size: 28rpx;
   font-weight: 700;
   color: #333333;
@@ -156,89 +193,57 @@
 }
 
 .bean-brand {
+  max-width: 50%;
   font-size: 26rpx;
   color: #888888;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  align-self: flex-start;
+  text-align: right;
 }
 
-.bean-tags-row {
+.bean-info-row {
   display: flex;
-  gap: 12rpx;
-}
-
-.tag {
-  padding: 8rpx 20rpx;
-  border-radius: 50rpx;
-  font-size: 22rpx;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.tag.type {
-  background-color: rgba(214, 181, 143, 0.16);
-  color: #a4723a;
-}
-
-.tag.roast {
-  background-color: rgba(240, 230, 192, 0.7);
-  color: #8d6a2f;
-}
-
-.bean-rating {
-  display: flex;
-  align-items: flex-start;
-  gap: 2rpx;
-}
-
-.brand-rating-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.rating-stars {
-  display: flex;
-  gap: 6rpx;
-}
-
-.star {
-  font-size: 24rpx;
-  color: #d0c6ba;
-}
-
-.star.active {
-  color: #d6b58f;
-}
-
-.rating-value {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #d6b58f;
-}
-
-.bean-footer {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20rpx 28rpx 28rpx;
-  border-top: 1rpx solid #f2efeb;
+  justify-content: space-between;
+  gap: 12rpx;
   font-size: 24rpx;
-  color: #888888;
+  color: #a58e77;
 }
 
-.bean-origin {
+.bean-origin,
+.bean-process {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.bean-process {
+  color: #8a754f;
+}
+
+.bean-rating {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: 24rpx;
+  color: #d6b58f;
+}
+
+.star {
+  color: #d6b58f;
+  font-size: 24rpx;
+}
+
+.rating-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #a4723a;
+}
+
 .bean-date {
-  margin-left: 16rpx;
+  flex-shrink: 0;
   color: #c0b6aa;
 }
 

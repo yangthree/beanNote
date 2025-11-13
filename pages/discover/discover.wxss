@@ -26,6 +26,33 @@ page {
   /* background-color: rgba(0, 0, 255, 0.05) !important; */
 }
 
+/* ===== 筛选控件 ===== */
+.filter-container {
+  display: flex;
+  gap: 16rpx;
+  padding: 48rpx 32rpx 24rpx;
+  background-color: transparent;
+}
+
+.filter-item {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #888888;
+  border-radius: 16rpx;
+  background-color: #f5f3ee;
+  transition: all 0.2s ease;
+}
+
+.filter-item.active {
+  background-color: #ffffff;
+  color: #8a673b;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
 /* 空状态 */
 .empty-state {
   flex: 1;
@@ -45,12 +72,12 @@ page {
 /* 发现列表 */
 .discover-list {
   position: absolute;
-  top: 0;
+  top: 136rpx; /* 筛选控件高度 + padding */
   left: 0;
   right: 0;
   bottom: 0;
   width: 100%;
-  padding: 48rpx 32rpx 0rpx ;
+  padding: 0 32rpx 0rpx;
   box-sizing: border-box;
 }
 
@@ -156,14 +183,22 @@ page {
 
 /* ===== 内容区域 ===== */
 .bean-content {
-  padding: 28rpx 28rpx 24rpx;
+  padding: 28rpx;
   display: flex;
   flex-direction: column;
   gap: 16rpx;
   flex: 1;
 }
 
+.bean-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
 .bean-name {
+  flex: 1;
   font-size: 28rpx;
   font-weight: 700;
   color: #333333;
@@ -174,57 +209,63 @@ page {
 }
 
 .bean-brand {
+  max-width: 50%;
   font-size: 26rpx;
   color: #888888;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  align-self: flex-start;
+  text-align: right;
 }
 
-.brand-rating-row {
+.bean-info-row {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.bean-rating {
-  display: flex;
-  align-items: flex-start;
-  gap: 2rpx;
-}
-
-.star {
-  font-size: 24rpx;
-  color: #d0c6ba;
-}
-
-.star.active {
-  color: #d6b58f;
-}
-
-.rating-value {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #d6b58f;
-}
-
-.bean-footer {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20rpx 28rpx 28rpx;
-  border-top: 1rpx solid #f2efeb;
+  justify-content: space之间;
+  gap: 12rpx;
   font-size: 24rpx;
-  color: #888888;
+  color: #a58e77;
 }
 
-.bean-origin {
+.bean-origin,
+.bean-process {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.bean-process {
+  color: #8a754f;
+}
+
+.bean-rating {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: 24rpx;
+  color: #d6b58f;
+}
+
+.star {
+  color: #d6b58f;
+  font-size: 24rpx;
+}
+
+.rating-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #a4723a;
+}
+
+.bean-extra-placeholder {
+  min-width: 24rpx;
+  height: 24rpx;
+}
+
+.user-info-footer {
+  padding: 24rpx 28rpx 28rpx;
+  border-top: 1rpx solid #f2efeb;
 }
 
 /* 加载更多 */

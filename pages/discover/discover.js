@@ -11,14 +11,23 @@ Page({
     refreshing: false, // 是否正在刷新
     hasMore: true, // 是否还有更多数据
     page: 1, // 当前页码
-    pageSize: 10 // 每页数量
+    pageSize: 10, // 每页数量（首次加载减少数据量，提升渲染性能）
+    filterType: 'all' // 筛选类型：'all' / 'pourOver' / 'espresso'
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.loadDiscoverList()
+    // 从本地存储读取上次的筛选状态
+    const savedFilterType = wx.getStorageSync('discoverFilterType')
+    if (savedFilterType && ['all', 'pourOver', 'espresso'].includes(savedFilterType)) {
+      this.setData({ filterType: savedFilterType }, () => {
+        this.loadDiscoverList()
+      })
+    } else {
+      this.loadDiscoverList()
+    }
   },
 
   /**
@@ -29,6 +38,28 @@ Page({
     if (this.data.discoverList.length === 0) {
       this.loadDiscoverList()
     }
+  },
+
+  /**
+   * 筛选类型切换事件
+   * @param {Object} e - 事件对象，包含 data-type
+   */
+  onFilterTypeChange(e) {
+    const { type } = e.currentTarget.dataset
+    if (!type || type === this.data.filterType) return
+
+    // 更新筛选类型
+    this.setData({ 
+      filterType: type,
+      page: 1,
+      hasMore: true,
+      discoverList: [] // 清空列表，重新加载
+    }, () => {
+      // 保存到本地存储
+      wx.setStorageSync('discoverFilterType', type)
+      // 重新加载数据
+      this.loadDiscoverList(true)
+    })
   },
 
   /**
@@ -49,7 +80,11 @@ Page({
     if (this.data.loading || !this.data.hasMore) {
       return
     }
-    this.loadDiscoverList()
+    // 加载更多时，先更新页码，避免重复加载同一页
+    const nextPage = this.data.page + 1
+    this.setData({ page: nextPage }, () => {
+      this.loadDiscoverList()
+    })
   },
 
   /**
@@ -88,16 +123,18 @@ Page({
     this.setData({ loading: true })
 
     try {
+      // 如果 reset 为 true，使用第一页；否则使用当前页码
+      const page = reset ? 1 : this.data.page
+      
       // 调用云函数 getDiscoverList 获取数据
       const res = await wx.cloud.callFunction({
         name: 'getDiscoverList',
         data: {
-          page: this.data.page,
-          pageSize: this.data.pageSize
+          page: page,
+          pageSize: this.data.pageSize,
+          filterType: this.data.filterType // 传入筛选类型
         }
       })
-
-      console.log('云函数 getDiscoverList 返回:', res)
 
       // 检查云函数调用是否成功
       if (res.errMsg !== 'cloud.callFunction:ok') {
@@ -109,34 +146,51 @@ Page({
         throw new Error(res.result.error || '获取列表失败')
       }
 
-      // 处理返回的数据
-      const listData = (res.result?.data || []).map(item => {
+      // 处理返回的数据（优化：减少不必要的计算，使用更高效的数据处理）
+      const rawData = res.result?.data || []
+      const listData = rawData.map(item => {
+        // 只处理必要的数据转换，减少计算
+        const publishTime = item.publishTime ? this.formatPublishTime(item.publishTime) : ''
+        const type = item.type === 'Pour Over' ? 'pourOver' : 'espresso'
+        const ratingValue = item.rating !== undefined && item.rating !== null
+          ? Number(item.rating).toFixed(1)
+          : '0.0'
+        
         return {
-          ...item,
-          publishTime: this.formatPublishTime(item.publishTime),
-          type: item.type === 'Pour Over' ? 'pourOver' : 'espresso', // 统一类型格式
-          userName: item.userName || '匿名用户', // 确保有默认值
-          userAvatar: item.userAvatar || '' // 确保有默认值
+          _id: item._id, // 保存发布记录的 ID，用于详情页查询
+          beanId: item.beanId,
+          beanName: item.beanName || '未命名咖啡豆',
+          brand: item.brand || '',
+          type: type,
+          roastLevel: item.roastLevel || '',
+          origin: item.origin || '',
+          altitude: item.altitude || '',
+          processMethod: item.processMethod || '',
+          roastDate: item.roastDate || '',
+          rating: item.rating || 0,
+          displayRating: ratingValue,
+          publishTime: publishTime,
+          userName: item.userName || '匿名用户',
+          userAvatar: item.userAvatar || ''
         }
       })
 
-      console.log('处理后的列表数据:', listData)
-
+      // 优化：合并 setData 调用，减少渲染次数
       if (reset) {
         this.setData({ 
           discoverList: listData, 
           page: 1,
-          hasMore: res.result?.hasMore || false
+          hasMore: res.result?.hasMore || false,
+          loading: false
         })
       } else {
+        // 加载更多时，页码已经在 onLoadMore 中更新了，这里只追加数据和更新 hasMore
         this.setData({ 
           discoverList: [...this.data.discoverList, ...listData],
-          page: this.data.page + 1,
-          hasMore: res.result?.hasMore || false
+          hasMore: res.result?.hasMore || false,
+          loading: false
         })
       }
-
-      this.setData({ loading: false })
     } catch (err) {
       console.error('加载发现列表失败:', err)
       wx.showToast({
@@ -153,8 +207,45 @@ Page({
    */
   viewDetail(e) {
     const bean = e.currentTarget.dataset.bean
-    // TODO: 跳转到详情页（只读模式）
-    console.log('查看详情:', bean)
-  }
+    const recordId = e.currentTarget.dataset.recordId
+    
+    console.log('点击查看详情，数据:', { bean, recordId })
+    
+    if (!bean || !bean.beanId) {
+      console.error('数据错误：bean 或 beanId 不存在', bean)
+      wx.showToast({
+        title: '数据错误',
+        icon: 'none'
+      })
+      return
+    }
+    
+    // 跳转到详情页（只读模式）
+    // 传递 beanId 和 recordId（如果有）
+    let url = `/pages/beanDetail/beanDetail?beanId=${bean.beanId}`
+    if (recordId) {
+      url += `&recordId=${recordId}`
+    }
+    
+    console.log('准备跳转到:', url)
+    
+    wx.navigateTo({
+      url: url,
+      success: (res) => {
+        if (res.eventChannel) {
+          res.eventChannel.emit('beanData', { bean, recordId })
+        }
+        console.log('跳转成功，已传递卡片数据')
+      },
+      fail: (err) => {
+        console.error('跳转失败:', err)
+        wx.showToast({
+          title: '跳转失败，请重试',
+          icon: 'none'
+        })
+      }
+    })
+  },
+
 })
 
