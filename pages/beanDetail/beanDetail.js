@@ -69,6 +69,19 @@ Page({
       recordId: recordId || null
     })
 
+    // 启用分享功能
+    console.log('[BeanDetail] onLoad - 启用分享功能')
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+      success: (res) => {
+        console.log('[BeanDetail] onLoad - 分享菜单启用成功', res)
+      },
+      fail: (err) => {
+        console.error('[BeanDetail] onLoad - 分享菜单启用失败', err)
+      }
+    })
+
     const eventChannel = this.getOpenerEventChannel ? this.getOpenerEventChannel() : null
     let cardDataReceived = false
 
@@ -385,26 +398,59 @@ Page({
   /**
    * 分享按钮点击
    */
-  onShare() {
-    // 触发微信原生分享
-    // 注意：微信小程序中，分享功能需要通过右上角菜单触发
-    // 这里可以显示一个提示
-    wx.showToast({
-      title: '请点击右上角分享',
-      icon: 'none'
-    })
+  onShare(e) {
+    console.log('[BeanDetail] 分享按钮被点击', e)
+    console.log('[BeanDetail] 当前数据:', this.data.displayData)
+    console.log('[BeanDetail] beanId:', this.data.beanId)
+    console.log('[BeanDetail] recordId:', this.data.recordId)
+    
+    // button 的 open-type="share" 会自动触发分享菜单
+    // 这里添加日志用于调试
+    try {
+      // 确保分享菜单已启用
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline'],
+        success: (res) => {
+          console.log('[BeanDetail] 分享菜单启用成功', res)
+        },
+        fail: (err) => {
+          console.error('[BeanDetail] 分享菜单启用失败', err)
+        }
+      })
+    } catch (error) {
+      console.error('[BeanDetail] 分享功能异常', error)
+    }
   },
 
   /**
    * 分享功能（微信原生）
    */
-  onShareAppMessage() {
+  onShareAppMessage(options) {
+    console.log('[BeanDetail] onShareAppMessage 被调用', options)
     const { displayData } = this.data
-    return {
+    const shareData = {
       title: `${displayData.name} - 咖啡豆记录`,
       path: `/pages/beanDetail/beanDetail?beanId=${this.data.beanId || ''}&recordId=${this.data.recordId || ''}`,
       imageUrl: displayData.coverImage || ''
     }
+    console.log('[BeanDetail] 分享数据:', shareData)
+    return shareData
+  },
+
+  /**
+   * 分享到朋友圈
+   */
+  onShareTimeline() {
+    console.log('[BeanDetail] onShareTimeline 被调用')
+    const { displayData } = this.data
+    const shareData = {
+      title: `${displayData.name} - 咖啡豆记录`,
+      query: `beanId=${this.data.beanId || ''}&recordId=${this.data.recordId || ''}`,
+      imageUrl: displayData.coverImage || ''
+    }
+    console.log('[BeanDetail] 朋友圈分享数据:', shareData)
+    return shareData
   }
 })
 

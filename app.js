@@ -1,4 +1,6 @@
 // app.js
+const { getCurrentEnvId, isProduction } = require('./utils/env')
+
 App({
   onLaunch() {
     this.initCloud()
@@ -23,8 +25,11 @@ App({
       return
     }
     
+    const envId = getCurrentEnvId()
+    console.log(`[环境配置] 当前环境: ${isProduction() ? '生产环境' : '开发环境'}, 环境ID: ${envId}`)
+    
     wx.cloud.init({
-      env: 'test-3g3ho1oo318ec768', // TODO: 替换为实际环境 ID
+      env: envId,
       traceUser: true
     })
   },

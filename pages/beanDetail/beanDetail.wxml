@@ -15,11 +15,6 @@
     show-scrollbar="{{false}}"
     wx:else
   >
-    <!-- 顶部分享按钮 -->
-    <view class="share-float" bindtap="onShare">
-      <text class="share-icon">⋯</text>
-    </view>
-
     <!-- 咖啡豆封面图 -->
     <view class="cover-section">
       <view class="cover-image-wrapper">

@@ -26,10 +26,6 @@
     >意式豆</view>
   </view>
 
-  <!-- 右上角发布按钮（新建和编辑都显示） -->
-  <view class="publish-btn" bindtap="openPublishDialog">
-    <text class="publish-icon">☁</text>
-  </view>
 
   <!-- 测试用：清除登录状态按钮（开发阶段使用，上线前删除） -->
   <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
@@ -192,55 +188,6 @@
         </view>
       </view>
 
-      <view class="score-card">
-        <text class="form-label">风味评分</text>
-        <view class="score-group">
-          <view class="score-item">
-            <text class="score-label">香气</text>
-            <view class="score-stars">
-              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.aroma >= item ? 'active' : ''}}"
-                data-key="aroma"
-                data-value="{{item}}"
-                bindtap="setFlavorScore"
-              >★</text>
-            </view>
-          </view>
-          <view class="score-item">
-            <text class="score-label">酸质</text>
-            <view class="score-stars">
-              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.acidity >= item ? 'active' : ''}}"
-                data-key="acidity"
-                data-value="{{item}}"
-                bindtap="setFlavorScore"
-              >★</text>
-            </view>
-          </view>
-          <view class="score-item">
-            <text class="score-label">甜感</text>
-            <view class="score-stars">
-              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.sweetness >= item ? 'active' : ''}}"
-                data-key="sweetness"
-                data-value="{{item}}"
-                bindtap="setFlavorScore"
-              >★</text>
-            </view>
-          </view>
-          <view class="score-item">
-            <text class="score-label">平衡感</text>
-            <view class="score-stars">
-              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
-                class="star {{flavorScores.balance >= item ? 'active' : ''}}"
-                data-key="balance"
-                data-value="{{item}}"
-                bindtap="setFlavorScore"
-              >★</text>
-            </view>
-          </view>
-        </view>
-      </view>
     </view>
 
     <!-- 意式表单 -->
@@ -313,9 +260,61 @@
         </view>
       </view>
 
+    </view>
+
+    <!-- 风味标签（共用） -->
+    <view class="section-card">
+      <!-- 风味评分 -->
       <view class="score-card">
-        <text class="form-label">风味评分</text>
-        <view class="score-group">
+        <view class="section-title">风味</view>
+        <text class="form-label">评分</text>
+        <view class="score-group" wx:if="{{beanType === 'pourOver'}}">
+          <view class="score-item">
+            <text class="score-label">香气</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.aroma >= item ? 'active' : ''}}"
+                data-key="aroma"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">酸质</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.acidity >= item ? 'active' : ''}}"
+                data-key="acidity"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">甜感</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.sweetness >= item ? 'active' : ''}}"
+                data-key="sweetness"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+          <view class="score-item">
+            <text class="score-label">平衡感</text>
+            <view class="score-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                class="star {{flavorScores.balance >= item ? 'active' : ''}}"
+                data-key="balance"
+                data-value="{{item}}"
+                bindtap="setFlavorScore"
+              >★</text>
+            </view>
+          </view>
+        </view>
+        <view class="score-group" wx:elif="{{beanType === 'espresso'}}">
           <view class="score-item">
             <text class="score-label">香气</text>
             <view class="score-stars">
@@ -362,11 +361,8 @@
           </view>
         </view>
       </view>
-    </view>
-
-    <!-- 风味标签（共用） -->
-    <view class="section-card">
-      <view class="section-title">风味标签</view>
+      <text class="form-label">标签</text>
+      <!-- 风味标签输入 -->
       <view class="form-grid flavors-block">
         <view class="form-item full">
           <view class="flavor-tags">
@@ -455,10 +451,13 @@
     </view>
   </view>
 
-  <!-- 底部保存按钮 -->
+  <!-- 底部按钮栏 -->
   <view class="footer-bar">
-    <button class="primary-btn" bindtap="saveRecord">
+    <button class="primary-btn save-btn" bindtap="saveRecord">
       {{isEdit ? '保存修改' : '保存记录'}}
+    </button>
+    <button class="primary-btn publish-btn-bottom" bindtap="openPublishDialog">
+      发布
     </button>
   </view>
 </view>
