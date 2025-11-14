@@ -28,9 +28,9 @@
 
 
   <!-- 测试用：清除登录状态按钮（开发阶段使用，上线前删除） -->
-  <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
+  <!-- <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
     <text class="clear-login-text">清除登录</text>
-  </view>
+  </view> -->
 
   <!-- 内容区域滚动 -->
   <scroll-view class="scroll-area" scroll-y show-scrollbar="false" enhanced="true" bounces="false">
