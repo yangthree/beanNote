@@ -53,6 +53,40 @@ page {
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
 }
 
+.rating-filter-container {
+  padding: 0 32rpx 24rpx;
+}
+
+.rating-filter-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.rating-filter-options {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12rpx;
+  padding-bottom: 8rpx;
+}
+
+.rating-filter-item {
+  padding: 14rpx 26rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #8a673b;
+  background-color: #f5f3ee;
+  border: 1rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.rating-filter-item.active {
+  background-color: #ffffff;
+  border-color: #d6b58f;
+  color: #8a673b;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
 /* 空状态 */
 .empty-state {
   flex: 1;
@@ -72,7 +106,7 @@ page {
 /* 发现列表 */
 .discover-list {
   position: absolute;
-  top: 136rpx; /* 筛选控件高度 + padding */
+  top: 236rpx; /* 筛选控件高度 + padding + 评分筛选 */
   left: 0;
   right: 0;
   bottom: 0;

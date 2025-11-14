@@ -27,6 +27,24 @@
     </view>
   </view>
 
+  <!-- 评分筛选 -->
+  <view class="rating-filter-container">
+    <scroll-view class="rating-filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="rating-filter-options">
+        <view
+          class="rating-filter-item {{ratingFilter === option.key ? 'active' : ''}}"
+          wx:for="{{ratingOptions}}"
+          wx:for-item="option"
+          wx:key="key"
+          data-key="{{option.key}}"
+          bindtap="onRatingFilterChange"
+        >
+          {{option.label}}
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
   <!-- 空状态提示 -->
   <view class="empty-state" wx:if="{{discoverList.length === 0 && !loading}}">
     <text class="empty-text">还没有人发布豆单，来成为第一个吧 ☕️</text>

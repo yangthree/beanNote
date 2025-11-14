@@ -10,29 +10,38 @@ cloud.init({
  */
 exports.main = async (event, context) => {
   try {
-    const { page = 1, pageSize = 10, filterType = 'all' } = event
+    const { page = 1, pageSize = 10, filterType = 'all', ratingFilter = null } = event
 
     console.log('云函数 getDiscoverList 被调用')
-    console.log('参数:', { page, pageSize, filterType })
+    console.log('参数:', { page, pageSize, filterType, ratingFilter })
 
     // 获取数据库引用
     const db = cloud.database()
+    const _ = db.command
     const publishRecordsCollection = db.collection('publish_records')
 
     // 构建查询条件
     let query = publishRecordsCollection
-    
+    const whereClause = {}
+
     // 根据 filterType 添加筛选条件
     if (filterType === 'pourOver') {
-      query = query.where({
-        type: 'Pour Over'
-      })
+      whereClause.type = 'Pour Over'
     } else if (filterType === 'espresso') {
-      query = query.where({
-        type: 'Espresso'
-      })
+      whereClause.type = 'Espresso'
     }
-    // filterType === 'all' 时不添加筛选条件
+
+    // 评分筛选
+    if (ratingFilter && ratingFilter.min !== undefined && ratingFilter.max !== undefined) {
+      whereClause.rating = _.and([
+        _.gte(Number(ratingFilter.min)),
+        _.lte(Number(ratingFilter.max))
+      ])
+    }
+
+    if (Object.keys(whereClause).length > 0) {
+      query = query.where(whereClause)
+    }
 
     // 计算跳过的记录数
     const skip = (page - 1) * pageSize

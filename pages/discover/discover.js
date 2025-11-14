@@ -12,7 +12,15 @@ Page({
     hasMore: true, // 是否还有更多数据
     page: 1, // 当前页码
     pageSize: 10, // 每页数量（首次加载减少数据量，提升渲染性能）
-    filterType: 'all' // 筛选类型：'all' / 'pourOver' / 'espresso'
+    filterType: 'all', // 筛选类型：'all' / 'pourOver' / 'espresso'
+    ratingFilter: 'all', // 评分筛选：'all' / '4.5-5' / '4.0-4.4' / '3.0-3.9' / '1.0-2.9'
+    ratingOptions: [
+      { key: 'all', label: '全部分数' },
+      { key: '4.5-5', label: '4.5-5' },
+      { key: '4.0-4.4', label: '4.0-4.4' },
+      { key: '3.0-3.9', label: '3.0-3.9' },
+      { key: '1.0-2.9', label: '1.0-2.9' }
+    ]
   },
 
   /**
@@ -21,13 +29,20 @@ Page({
   onLoad(options) {
     // 从本地存储读取上次的筛选状态
     const savedFilterType = wx.getStorageSync('discoverFilterType')
-    if (savedFilterType && ['all', 'pourOver', 'espresso'].includes(savedFilterType)) {
-      this.setData({ filterType: savedFilterType }, () => {
-        this.loadDiscoverList()
-      })
-    } else {
+    const savedRatingFilter = wx.getStorageSync('discoverRatingFilter')
+    const nextFilterType = savedFilterType && ['all', 'pourOver', 'espresso'].includes(savedFilterType)
+      ? savedFilterType
+      : 'all'
+    const nextRatingFilter = savedRatingFilter && this.isValidRatingFilter(savedRatingFilter)
+      ? savedRatingFilter
+      : 'all'
+
+    this.setData({
+      filterType: nextFilterType,
+      ratingFilter: nextRatingFilter
+    }, () => {
       this.loadDiscoverList()
-    }
+    })
   },
 
   /**
@@ -64,6 +79,26 @@ Page({
       // 保存到本地存储
       wx.setStorageSync('discoverFilterType', type)
       // 重新加载数据
+      this.loadDiscoverList(true)
+    })
+  },
+
+  /**
+   * 评分筛选切换
+   */
+  onRatingFilterChange(e) {
+    const { key } = e.currentTarget.dataset
+    if (!key || key === this.data.ratingFilter) return
+
+    if (!this.isValidRatingFilter(key)) return
+
+    this.setData({
+      ratingFilter: key,
+      page: 1,
+      hasMore: true,
+      discoverList: []
+    }, () => {
+      wx.setStorageSync('discoverRatingFilter', key)
       this.loadDiscoverList(true)
     })
   },
@@ -133,12 +168,15 @@ Page({
       const page = reset ? 1 : this.data.page
       
       // 调用云函数 getDiscoverList 获取数据
+      const ratingRange = this.getRatingRange(this.data.ratingFilter)
+
       const res = await wx.cloud.callFunction({
         name: 'getDiscoverList',
         data: {
           page: page,
           pageSize: this.data.pageSize,
-          filterType: this.data.filterType // 传入筛选类型
+          filterType: this.data.filterType, // 传入筛选类型
+          ratingFilter: ratingRange
         }
       })
 
@@ -204,6 +242,32 @@ Page({
         icon: 'none'
       })
       this.setData({ loading: false })
+    }
+  },
+
+  /**
+   * 校验评分筛选 key
+   */
+  isValidRatingFilter(key) {
+    const validKeys = ['all', '4.5-5', '4.0-4.4', '3.0-3.9', '1.0-2.9']
+    return validKeys.includes(key)
+  },
+
+  /**
+   * 根据评分筛选 key 获取区间
+   */
+  getRatingRange(key) {
+    switch (key) {
+      case '4.5-5':
+        return { min: 4.5, max: 5 }
+      case '4.0-4.4':
+        return { min: 4.0, max: 4.4 }
+      case '3.0-3.9':
+        return { min: 3.0, max: 3.9 }
+      case '1.0-2.9':
+        return { min: 1.0, max: 2.9 }
+      default:
+        return null
     }
   },
 
