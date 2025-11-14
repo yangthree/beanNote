@@ -157,5 +157,6 @@ Page({
     wx.navigateTo({
       url: '/pages/detail/detail?mode=create&type=pourOver'
     })
-  }
+  },
+
 })

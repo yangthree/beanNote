@@ -873,7 +873,7 @@ Page({
       console.log('avatarUrl:', this.data.userProfile.avatarUrl)
       console.log('==========================')
 
-      // 准备发布数据
+      // 准备发布数据（包含所有字段）
       const publishData = {
         beanId: bean.id,
         userName: this.data.userProfile.nickName,
@@ -886,9 +886,17 @@ Page({
         altitude: bean.altitude || '',
         processMethod: bean.processMethod || '',
         roastDate: bean.roastDate || '',
-        flavorNotes: bean.flavors || bean.flavorScores ? 
-          (bean.type === BEAN_TYPE.POUR_OVER ? bean.flavors : Object.keys(bean.flavorScores || {})) : [],
+        flavorNotes: bean.flavors || [],
         rating: bean.rating !== undefined && bean.rating !== null ? bean.rating : 0,
+        remarks: bean.notes || '',
+        // 手冲参数
+        brewParams: bean.brewParams || {},
+        // 意式参数
+        extractParams: bean.extractParams || {},
+        // 风味评分
+        flavorScores: bean.flavorScores || {},
+        // 设备信息
+        equipment: bean.equipment || {},
         createTime: bean.createdAt || new Date().toISOString()
       }
 
@@ -903,14 +911,28 @@ Page({
       })
 
       console.log('云函数 publishRecord 返回:', res)
+      console.log('返回结果详情:', JSON.stringify(res, null, 2))
 
       // 检查云函数返回结果
       if (res.errMsg !== 'cloud.callFunction:ok') {
-        throw new Error('云函数调用失败')
+        console.error('云函数调用失败，errMsg:', res.errMsg)
+        throw new Error(`云函数调用失败: ${res.errMsg}`)
       }
 
-      if (res.result && res.result.success === false) {
-        throw new Error(res.result.error || '发布失败')
+      if (!res.result) {
+        console.error('云函数返回结果为空')
+        throw new Error('云函数返回结果为空，请检查云函数是否正常')
+      }
+
+      if (res.result.success === false) {
+        const errorMsg = res.result.error || '发布失败'
+        console.error('云函数返回失败:', errorMsg)
+        throw new Error(errorMsg)
+      }
+
+      if (res.result.success !== true) {
+        console.error('云函数返回格式异常:', res.result)
+        throw new Error('云函数返回格式异常，请检查云函数日志')
       }
 
       // 发布成功
@@ -931,10 +953,13 @@ Page({
 
     } catch (err) {
       console.error('发布失败:', err)
-      wx.showToast({
-        title: err.message || '发布失败，请稍后重试',
-        icon: 'none',
-        duration: 2000
+      console.error('错误堆栈:', err.stack)
+      const errorMsg = err.message || err.errMsg || '发布失败，请稍后重试'
+      wx.showModal({
+        title: '发布失败',
+        content: errorMsg + '\n\n请检查：\n1. 云函数是否已部署\n2. 网络连接是否正常\n3. 查看控制台日志',
+        showCancel: false,
+        confirmText: '知道了'
       })
     } finally {
       this.setData({ isPublishing: false })

@@ -1,0 +1,10 @@
+{
+  "name": "batchPublishRecords",
+  "version": "1.0.0",
+  "description": "批量发布咖啡豆记录到发现页",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
+

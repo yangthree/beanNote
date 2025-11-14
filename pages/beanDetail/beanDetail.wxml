@@ -31,10 +31,10 @@
       </view>
     </view>
 
-    <!-- 标题区（名称 + 产区） -->
+    <!-- 标题区（名称 + 品牌） -->
     <view class="title-section">
       <view class="bean-name">{{displayData.name}}</view>
-      <view class="bean-origin" wx:if="{{displayData.origin}}">{{displayData.origin}}</view>
+      <view class="bean-brand" wx:if="{{displayData.brand}}">{{displayData.brand}}</view>
     </view>
 
     <!-- 标签模块（风味标签） -->

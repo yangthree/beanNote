@@ -115,7 +115,7 @@ page {
   margin-bottom: 12rpx;
 }
 
-.bean-origin {
+.bean-brand {
   font-size: 28rpx;
   color: #888888;
   line-height: 1.5;

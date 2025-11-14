@@ -22,7 +22,7 @@ Page({
       flavors: [],
       notes: '',
       coverImage: '',
-      type: 'pourOver', // pourOver / espresso
+      type: 'pourOver', // pourOver / esp=sso
       // 手冲参数
       brewParams: {
         coffeeWeight: '',
@@ -210,32 +210,10 @@ Page({
 
   /**
    * 将发布记录映射为 bean 数据格式
+   * 直接使用发布记录的数据，不从本地数据库获取
    */
   mapPublishRecordToBeanData(record) {
-    // 尝试从本地存储获取完整数据（如果 beanId 存在）
-    if (record.beanId) {
-      try {
-        const { getBeanById } = require('../../utils/dataModel.js')
-        const localBean = getBeanById(record.beanId)
-        if (localBean) {
-          // 合并本地数据和发布记录数据（优先使用本地数据，但保留发布记录的用户信息）
-          return {
-            ...localBean,
-            beanId: record.beanId,
-            altitude: localBean.altitude || record.altitude || '',
-            processMethod: localBean.processMethod || record.processMethod || '',
-            roastDate: localBean.roastDate || record.roastDate || '',
-            userName: record.userName || '匿名用户',
-            userAvatar: record.userAvatar || '',
-            publishTime: record.publishTime || record.createTime || ''
-          }
-        }
-      } catch (err) {
-        console.warn('从本地获取完整数据失败:', err)
-      }
-    }
-
-    // 如果没有本地数据，使用发布记录的数据
+    // 直接使用发布记录的数据
     return {
       id: record.beanId || record._id,
       beanId: record.beanId,
@@ -248,7 +226,7 @@ Page({
       roastDate: record.roastDate || '',
       rating: record.rating || 0,
       flavors: record.flavorNotes || [],
-      notes: record.notes || '', // 发布记录中可能没有 notes
+      notes: record.remarks || record.notes || '', // 发布记录中使用 remarks 字段
       coverImage: record.coverImage || '', // 发布记录中可能没有 coverImage
       type: record.type === 'Pour Over' ? 'pourOver' : 'espresso',
       // 发布记录中可能没有完整的参数
@@ -273,7 +251,7 @@ Page({
       rating: beanData.rating || 0,
       ratingText: beanData.rating ? beanData.rating.toFixed(1) : '0.0',
       flavors: Array.isArray(beanData.flavors) ? beanData.flavors : [],
-      notes: beanData.notes || '',
+      notes: beanData.remarks || beanData.notes || '', // 支持 remarks 和 notes 两种字段名
       coverImage: beanData.coverImage || '',
       type: beanData.type || 'pourOver',
       userName: beanData.userName || '匿名用户',

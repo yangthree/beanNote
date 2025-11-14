@@ -1,0 +1,103 @@
+<!-- pages/batchUpload/batchUpload.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="title">批量上传工具</view>
+    <view class="subtitle">将 JSON 数据上传到发现页</view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-label">总记录数</text>
+      <text class="stat-value">{{total}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">已上传</text>
+      <text class="stat-value success">{{currentIndex}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">待上传</text>
+      <text class="stat-value">{{allRecords.length - currentIndex}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">成功</text>
+      <text class="stat-value success">{{successCount}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">失败</text>
+      <text class="stat-value fail" wx:if="{{failCount > 0}}">{{failCount}}</text>
+      <text class="stat-value" wx:else>0</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button 
+      class="btn btn-primary" 
+      bindtap="startUpload"
+      loading="{{uploading}}"
+      disabled="{{uploading || allRecords.length === 0}}"
+    >
+      {{uploadButtonText}}
+    </button>
+    <button 
+      class="btn btn-secondary" 
+      bindtap="showImportDialog"
+      disabled="{{uploading}}"
+    >
+      导入数据
+    </button>
+    <button 
+      class="btn btn-secondary" 
+      bindtap="resetData"
+      disabled="{{uploading}}"
+    >
+      重置
+    </button>
+  </view>
+
+  <!-- 进度信息 -->
+  <view class="progress-card" wx:if="{{total > 0}}">
+    <view class="progress-label">上传进度</view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(currentIndex / total * 100)}}%"></view>
+    </view>
+    <view class="progress-text">{{currentIndex}} / {{total}} ({{Math.round(currentIndex / total * 100)}}%)</view>
+  </view>
+
+  <!-- 上传日志 -->
+  <view class="log-card">
+    <view class="log-header">
+      <text class="log-title">上传日志</text>
+      <text class="clear-log" bindtap="clearLog">清空</text>
+    </view>
+    <scroll-view class="log-content" scroll-y="true">
+      <view class="log-item" wx:for="{{log}}" wx:key="index">
+        <text class="log-time">{{item.time}}</text>
+        <text class="log-message">{{item.message}}</text>
+      </view>
+      <view class="log-empty" wx:if="{{log.length === 0}}">暂无日志</view>
+    </scroll-view>
+  </view>
+
+  <!-- 导入数据对话框 -->
+  <view class="import-mask" wx:if="{{showImportDialog}}" bindtap="closeImportDialog">
+    <view class="import-dialog" catchtap="stopPropagation">
+      <view class="import-title">导入 JSON 数据</view>
+      <view class="import-desc">请将 beans_full.json 的数组内容粘贴到下方</view>
+      <textarea 
+        class="import-textarea"
+        placeholder="粘贴 JSON 数组内容..."
+        value="{{importText}}"
+        bindinput="onImportTextInput"
+        maxlength="-1"
+        auto-height="{{true}}"
+      />
+      <view class="import-actions">
+        <button class="import-btn-cancel" bindtap="closeImportDialog">取消</button>
+        <button class="import-btn-confirm" bindtap="confirmImport">确认导入</button>
+      </view>
+    </view>
+  </view>
+</view>
+

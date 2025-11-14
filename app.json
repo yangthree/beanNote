@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/discover/discover",
     "pages/detail/detail",
-    "pages/beanDetail/beanDetail"
+    "pages/beanDetail/beanDetail",
+    "pages/batchUpload/batchUpload"
   ],
   "window": {
     "navigationBarTitleText": "咖啡豆记录",

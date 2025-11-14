@@ -14,8 +14,9 @@ exports.main = async (event, context) => {
     const { beanData } = event
 
     console.log('云函数 publishRecord 被调用')
-    console.log('beanData:', beanData)
+    console.log('beanData:', JSON.stringify(beanData, null, 2))
     console.log('OPENID:', wxContext.OPENID)
+    console.log('环境ID:', cloud.DYNAMIC_CURRENT_ENV)
 
     // 验证必要参数
     if (!beanData) {
@@ -36,7 +37,8 @@ exports.main = async (event, context) => {
     const db = cloud.database()
     const publishRecordsCollection = db.collection('publish_records')
 
-    // 准备发布数据
+    // 准备发布数据（包含所有字段）
+    console.log('准备发布数据，beanData.type:', beanData.type)
     const publishData = {
       beanId: beanData.beanId || beanData.id,
       userId: wxContext.OPENID,
@@ -52,9 +54,20 @@ exports.main = async (event, context) => {
       roastDate: beanData.roastDate || '',
       flavorNotes: beanData.flavorNotes || [],
       rating: beanData.rating || 0,
+      remarks: beanData.remarks || beanData.notes || '',
+      // 手冲参数
+      brewParams: beanData.brewParams || {},
+      // 意式参数
+      extractParams: beanData.extractParams || {},
+      // 风味评分
+      flavorScores: beanData.flavorScores || {},
+      // 设备信息
+      equipment: beanData.equipment || {},
       createTime: beanData.createTime || new Date(),
       publishTime: new Date()
     }
+
+    console.log('准备插入的发布数据:', JSON.stringify(publishData, null, 2))
 
     // 检查是否已经发布过（根据 beanId 和 userId）
     const existingRecord = await publishRecordsCollection
@@ -83,11 +96,13 @@ exports.main = async (event, context) => {
       }
     } else {
       // 新增发布记录
+      console.log('准备新增发布记录到数据库')
       const result = await publishRecordsCollection.add({
         data: publishData
       })
       
-      console.log('新增发布记录成功:', result._id)
+      console.log('新增发布记录成功，_id:', result._id)
+      console.log('返回结果:', result)
       return {
         success: true,
         message: '发布成功',
@@ -96,9 +111,12 @@ exports.main = async (event, context) => {
     }
   } catch (err) {
     console.error('云函数 publishRecord 执行错误:', err)
+    console.error('错误堆栈:', err.stack)
+    console.error('错误详情:', JSON.stringify(err, null, 2))
     return {
       success: false,
-      error: err.message || '发布失败'
+      error: err.message || err.errMsg || '发布失败',
+      errorDetail: err.toString()
     }
   }
 }

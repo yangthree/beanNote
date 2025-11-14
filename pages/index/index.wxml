@@ -4,7 +4,6 @@
   <!-- 顶部标题区域 -->
   <view class="header">
     <view class="header-title">我的豆单</view>
-    <view class="header-action">⋮</view>
   </view>
 
   <!-- 搜索输入框 -->

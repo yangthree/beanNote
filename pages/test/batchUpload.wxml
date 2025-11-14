@@ -1,0 +1,22 @@
+<!-- pages/test/batchUpload.wxml -->
+<view class="container">
+  <view class="title">批量上传工具</view>
+  <view class="desc">将 beans_full.json 中的数据批量上传到发现页</view>
+  
+  <button 
+    class="upload-btn" 
+    bindtap="batchUpload"
+    loading="{{uploading}}"
+    disabled="{{uploading}}"
+  >
+    {{uploading ? '上传中...' : '开始批量上传'}}
+  </button>
+
+  <view class="result" wx:if="{{result}}">
+    <view class="result-title">上传结果</view>
+    <view class="result-item">总计: {{result.total}} 条</view>
+    <view class="result-item success">成功: {{result.successCount}} 条</view>
+    <view class="result-item fail" wx:if="{{result.failCount > 0}}">失败: {{result.failCount}} 条</view>
+  </view>
+</view>
+
