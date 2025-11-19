@@ -62,6 +62,7 @@ function createBaseRecord(payload = {}) {
     flavors: Array.isArray(payload.flavors) ? payload.flavors : [],
     notes: payload.notes || '',
     coverImage: payload.coverImage || '',
+    pricePer100g: normalizePrice(payload.pricePer100g),
     equipment: {
       brewer: payload.equipment?.brewer || '',
       grinder: payload.equipment?.grinder || ''
@@ -132,6 +133,17 @@ function normalizeNumber(value) {
 }
 
 /**
+ * 标准化价格字段（兼容旧数据）
+ * @param {Number|String|null|undefined} value - 价格值
+ * @returns {Number|null} 标准化后的价格，无效值返回 null
+ */
+function normalizePrice(value) {
+  if (value === null || value === undefined || value === '') return null
+  const num = Number(value)
+  return Number.isFinite(num) && num >= 0 ? num : null
+}
+
+/**
  * 确保记录结构完整
  */
 function normalizeRecord(record = {}) {
@@ -166,6 +178,19 @@ function formatDate(dateString) {
 }
 
 /**
+ * 价格展示（每百克价格）
+ * @param {Number|String} price - 价格值
+ * @returns {String} 格式化后的价格字符串，如 "¥35/100g" 或 ""
+ */
+function formatPricePer100g(price) {
+  if (price === null || price === undefined || price === '') return ''
+  const num = Number(price)
+  if (!Number.isFinite(num) || num < 0) return ''
+  const formatted = num % 1 === 0 ? num.toFixed(0) : num.toFixed(2)
+  return `¥${formatted}/100g`
+}
+
+/**
  * 首页卡片视图模型
  */
 function mapToHomeCard(record) {
@@ -174,6 +199,7 @@ function mapToHomeCard(record) {
     ...bean,
     displayRating: formatRating(bean.rating),
     displayDate: formatDate(bean.createdAt),
+    displayPricePer100g: formatPricePer100g(bean.pricePer100g),
     hasCover: Boolean(bean.coverImage)
   }
 }
@@ -368,6 +394,7 @@ module.exports = {
   normalizeRecord,
   formatRating,
   formatDate,
+  formatPricePer100g,
   mapToHomeCard,
   getAllBeans,
   getBeanById,

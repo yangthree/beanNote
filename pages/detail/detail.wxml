@@ -55,6 +55,15 @@
           />
         </view>
         <view class="form-item">
+          <text class="form-label">每百克价格 (¥)</text>
+          <input class="form-input"
+            type="digit"
+            placeholder="如：35"
+            value="{{pricePer100g}}"
+            bindinput="onPriceInput"
+          />
+        </view>
+        <view class="form-item">
           <text class="form-label">评分 (0-5) *</text>
           <input class="form-input"
             type="digit"

@@ -25,6 +25,7 @@ Page({
     altitude: '',
     processMethod: '',
     roastDate: '',
+    pricePer100g: '',
     
     // 手冲参数
     pourOverParams: {
@@ -203,6 +204,9 @@ Page({
       processMethod: bean.processMethod || '',
       roastDate: bean.roastDate || '',
       notes: bean.notes || '',
+      pricePer100g: bean.pricePer100g !== undefined && bean.pricePer100g !== null
+        ? String(bean.pricePer100g)
+        : '',
       coverImage: bean.coverImage || ''
     })
     this.updateRatingState(bean.rating !== undefined && bean.rating !== null ? bean.rating : null)
@@ -405,6 +409,17 @@ Page({
     this.setData({ processMethod: e.detail.value })
   },
 
+  onPriceInput(e) {
+    const raw = e.detail.value || ''
+    const sanitized = raw.replace(/[^0-9.]/g, '')
+    const parts = sanitized.split('.')
+    let formatted = parts[0]
+    if (parts.length > 1) {
+      formatted += '.' + parts[1].slice(0, 2)
+    }
+    this.setData({ pricePer100g: formatted })
+  },
+
   onRoastDateChange(e) {
     const value = e.detail.value
     this.setData({ roastDate: value })
@@ -575,6 +590,7 @@ Page({
         altitude: this.data.altitude || '',
         processMethod: this.data.processMethod,
         roastDate: this.data.roastDate,
+        pricePer100g: this.data.pricePer100g,
         brewParams: this.data.pourOverParams,
         flavorScores: flavorScoresForSave,
         flavors: this.data.flavors,
@@ -598,6 +614,7 @@ Page({
         altitude: this.data.altitude || '',
         processMethod: this.data.processMethod,
         roastDate: this.data.roastDate,
+        pricePer100g: this.data.pricePer100g,
         extractParams: this.data.espressoParams,
         flavorScores: flavorScoresForSave,
         flavors: this.data.flavors,
@@ -886,6 +903,7 @@ Page({
         altitude: bean.altitude || '',
         processMethod: bean.processMethod || '',
         roastDate: bean.roastDate || '',
+        pricePer100g: bean.pricePer100g ?? null,
         flavorNotes: bean.flavors || [],
         rating: bean.rating !== undefined && bean.rating !== null ? bean.rating : 0,
         remarks: bean.notes || '',

@@ -60,6 +60,10 @@
           <text class="info-label">评分</text>
           <text class="info-value">{{displayData.ratingText}}</text>
         </view>
+        <view class="info-item" wx:if="{{displayData.pricePer100gText}}">
+          <text class="info-label">每百克价格</text>
+          <text class="info-value">{{displayData.pricePer100gText}}</text>
+        </view>
         <view class="info-item" wx:if="{{displayData.roastLevel}}">
           <text class="info-label">烘焙度</text>
           <text class="info-value">{{displayData.roastLevel}}</text>

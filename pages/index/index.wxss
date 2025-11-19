@@ -158,12 +158,25 @@
   position: absolute;
   top: 24rpx;
   left: 24rpx;
+  height: 30rpx;
   padding: 10rpx 20rpx;
   background-color: rgba(214, 181, 143, 0.9);
   color: #ffffff;
   font-size: 22rpx;
   border-radius: 999rpx;
 }
+
+.bean-price {
+    position: absolute;
+    top: 24rpx;
+    right: 24rpx;
+    height: 30rpx;
+    padding: 10rpx 20rpx;
+    background-color: rgba(214, 181, 143, 0.9);
+    color: #ffffff;
+    font-size: 22rpx;
+    border-radius: 999rpx;
+  }
 
 /* ===== 内容区域 ===== */
 .bean-content {
@@ -209,6 +222,10 @@
   gap: 12rpx;
   font-size: 24rpx;
   color: #a58e77;
+}
+
+.price-row {
+  justify-content: flex-start;
 }
 
 .bean-origin,

@@ -71,7 +71,7 @@
           />
           <view wx:else class="bean-image-placeholder">☕</view>
           <view class="bean-badge">{{item.type === 'pourOver' ? '手冲' : '意式'}}/{{item.roastLevel}}</view>
-        </view>
+          <view class="bean-price" wx:if="{{item.displayPricePer100g}}">{{item.displayPricePer100g}}</view></view>
 
         <!-- 内容区 -->
         <view class="bean-content">

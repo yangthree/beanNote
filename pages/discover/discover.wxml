@@ -2,6 +2,18 @@
 <!-- 发现页：展示所有用户发布的咖啡豆记录 -->
 <view class="page">
 
+  <!-- 搜索输入框 -->
+  <view class="search-container">
+    <text class="search-icon">🔍</text>
+    <input
+      class="search-input"
+      placeholder="搜索豆名、品牌..."
+      placeholder-style="color:#888888"
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+    />
+  </view>
+
   <!-- 筛选控件（Segmented Control） -->
   <view class="filter-container">
     <view 
@@ -69,6 +81,9 @@
         <view class="bean-image-wrapper">
           <view class="bean-image-placeholder">☕</view>
           <view class="bean-badge">{{item.type === 'pourOver' ? '手冲' : '意式'}}/{{item.roastLevel}}</view>
+          <view class="bean-price-badge" wx:if="{{item.displayPrice}}">
+            {{item.displayPrice}}
+          </view>
         </view>
 
         <!-- 内容区 -->
@@ -87,7 +102,6 @@
               <text class="rating-value">{{item.displayRating}}</text>
             </view>
           </view>
-
           <!-- 第三行：处理法 + 右侧预留 -->
           <view class="bean-info-row">
             <text class="bean-process" wx:if="{{item.processMethod}}">{{item.processMethod}}</text>
@@ -118,6 +132,50 @@
   <!-- 加载中提示 -->
   <view class="loading" wx:if="{{loading}}">
     <text>加载中...</text>
+  </view>
+
+  <!-- 登录提示弹窗：提醒用户授权微信信息 -->
+  <view class="login-mask" wx:if="{{showLoginDialog}}">
+    <view class="login-dialog" catchtap="stopPropagation">
+      <view class="login-title">请先登录</view>
+      <view class="login-desc">
+        为保障数据同步与发布功能，请设置您的头像和昵称。
+      </view>
+      
+      <!-- 用户信息设置区域 -->
+      <view class="user-info-form">
+        <!-- 头像选择 -->
+        <view class="avatar-section">
+          <text class="form-label">头像</text>
+          <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+            <view class="avatar-preview-wrapper">
+              <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
+              <view wx:else class="avatar-placeholder">
+                <text class="avatar-icon">👤</text>
+              </view>
+            </view>
+            <text class="avatar-text">点击选择头像</text>
+          </button>
+        </view>
+        
+        <!-- 昵称输入 -->
+        <view class="nickname-section">
+          <text class="form-label">昵称</text>
+          <input 
+            class="nickname-input" 
+            type="nickname" 
+            placeholder="请输入昵称"
+            value="{{tempNickName}}"
+            bindinput="onNickNameInput"
+            bindblur="onNickNameBlur"
+          />
+        </view>
+      </view>
+      
+      <view class="login-actions">
+        <button class="login-btn primary" hover-class="none" loading="{{isLoggingIn}}" bindtap="confirmLogin">确认登录</button>
+      </view>
+    </view>
   </view>
 </view>
 

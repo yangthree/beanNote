@@ -104,6 +104,7 @@ exports.main = async (event, context) => {
           altitude: record.altitude || '',
           processMethod: record.processMethod || '',
           roastDate: record.roastDate || '',
+          pricePer100g: record.pricePer100g ?? null,
           flavorNotes: Array.isArray(record.flavorNotes) ? record.flavorNotes : [],
           rating: rating,
           remarks: remarks,

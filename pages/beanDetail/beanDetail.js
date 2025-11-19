@@ -19,6 +19,7 @@ Page({
       roastLevel: '',
       rating: 0,
       ratingText: '0.0',
+      pricePer100gText: '',
       flavors: [],
       notes: '',
       coverImage: '',
@@ -229,6 +230,7 @@ Page({
       notes: record.remarks || record.notes || '', // 发布记录中使用 remarks 字段
       coverImage: record.coverImage || '', // 发布记录中可能没有 coverImage
       type: record.type === 'Pour Over' ? 'pourOver' : 'espresso',
+      pricePer100g: record.pricePer100g ?? null,
       // 发布记录中可能没有完整的参数
       brewParams: record.brewParams || {},
       extractParams: record.extractParams || {},
@@ -250,6 +252,7 @@ Page({
       roastLevel: beanData.roastLevel || '',
       rating: beanData.rating || 0,
       ratingText: beanData.rating ? beanData.rating.toFixed(1) : '0.0',
+      pricePer100gText: this.formatPricePer100g(beanData.pricePer100g),
       flavors: Array.isArray(beanData.flavors) ? beanData.flavors : [],
       notes: beanData.remarks || beanData.notes || '', // 支持 remarks 和 notes 两种字段名
       coverImage: beanData.coverImage || '',
@@ -318,6 +321,14 @@ Page({
       beanData: beanData,
       displayData: displayData
     })
+  },
+
+  formatPricePer100g(price) {
+    if (price === null || price === undefined) return ''
+    const num = Number(price)
+    if (!Number.isFinite(num) || num < 0) return ''
+    const formatted = num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)
+    return `¥${formatted}/100g`
   },
 
   mapFlavorScoresForDisplay(rawScores = {}, type = 'pourOver') {

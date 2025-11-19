@@ -52,6 +52,7 @@ exports.main = async (event, context) => {
       altitude: beanData.altitude || '',
       processMethod: beanData.processMethod || '',
       roastDate: beanData.roastDate || '',
+      pricePer100g: beanData.pricePer100g ?? null,
       flavorNotes: beanData.flavorNotes || [],
       rating: beanData.rating || 0,
       remarks: beanData.remarks || beanData.notes || '',

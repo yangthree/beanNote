@@ -26,11 +26,45 @@ page {
   /* background-color: rgba(0, 0, 255, 0.05) !important; */
 }
 
+/* ===== 搜索框 ===== */
+.search-container {
+  position: relative;
+  padding: 48rpx 32rpx 24rpx;
+  background-color: transparent;
+}
+
+.search-icon {
+  position: absolute;
+  top: 55%;
+  left: 86rpx; /* 32rpx (容器padding) + 44rpx (输入框padding-left的一半，88rpx/2) */
+  transform: translate(-50%, -50%); /* 水平和垂直都居中 */
+  font-size: 32rpx;
+  color: #888888;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 32rpx 0 88rpx;
+  border-radius: 44rpx;
+  background-color: #ffffff;
+  border: 2rpx solid #e5ded4;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.search-input:focus {
+  border-color: #d6b58f;
+}
+
 /* ===== 筛选控件 ===== */
 .filter-container {
   display: flex;
   gap: 16rpx;
-  padding: 48rpx 32rpx 24rpx;
+  padding: 0 32rpx 24rpx;
   background-color: transparent;
 }
 
@@ -106,7 +140,7 @@ page {
 /* 发现列表 */
 .discover-list {
   position: absolute;
-  top: 236rpx; /* 筛选控件高度 + padding + 评分筛选 */
+  top: 340rpx; /* 搜索框 + 筛选控件高度 + padding + 评分筛选 */
   left: 0;
   right: 0;
   bottom: 0;
@@ -208,6 +242,19 @@ page {
   position: absolute;
   top: 24rpx;
   left: 24rpx;
+  height: 30rpx;
+  padding: 10rpx 20rpx;
+  background-color: rgba(214, 181, 143, 0.9);
+  color: #ffffff;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+}
+
+.bean-price-badge {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  height: 30rpx;
   padding: 10rpx 20rpx;
   background-color: rgba(214, 181, 143, 0.9);
   color: #ffffff;
@@ -255,11 +302,12 @@ page {
 .bean-info-row {
   display: flex;
   align-items: center;
-  justify-content: space之间;
+  justify-content: space-between;
   gap: 12rpx;
   font-size: 24rpx;
   color: #a58e77;
 }
+
 
 .bean-origin,
 .bean-process {
@@ -297,6 +345,7 @@ page {
   height: 24rpx;
 }
 
+
 .user-info-footer {
   padding: 24rpx 28rpx 28rpx;
   border-top: 1rpx solid #f2efeb;
@@ -319,5 +368,166 @@ page {
   padding: 80rpx 0;
   font-size: 28rpx;
   color: #888888;
+}
+
+/* ===== 登录弹窗样式 ===== */
+.login-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+
+.login-dialog {
+  width: 580rpx;
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 0 16rpx 32rpx rgba(0, 0, 0, 0.12);
+}
+
+.login-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+.login-desc {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 32rpx;
+}
+
+/* 用户信息表单 */
+.user-info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.avatar-section,
+.nickname-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.user-info-form .form-label {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+/* 头像选择按钮 */
+.avatar-btn {
+  display: flex; 
+  align-items: center;
+  gap: 20rpx;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-preview-wrapper {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 60rpx;
+  overflow: hidden;
+  background-color: #f9f7f5;
+  border: 2rpx dashed #d6b58f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 60rpx;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(214, 181, 143, 0.16);
+  color: #8a673b;
+}
+
+.avatar-icon {
+  font-size: 30rpx;
+}
+
+.avatar-text {
+  font-size: 24rpx;
+  color: #8a673b;
+}
+
+/* 昵称输入框 */
+.nickname-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 20rpx;
+  border: 2rpx solid #e5ded4;
+  background-color: #ffffff;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+.nickname-input:focus {
+  border-color: #d6b58f;
+}
+
+.login-actions {
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.login-btn {
+  min-width: 160rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 36rpx;
+  border: none;
+  font-size: 28rpx;
+  padding: 0 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.login-btn.primary {
+  background: linear-gradient(135deg, #d6b58f 0%, #c4a077 100%);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.login-btn.primary:active {
+  opacity: 0.8;
 }
 

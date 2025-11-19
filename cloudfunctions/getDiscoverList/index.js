@@ -10,10 +10,10 @@ cloud.init({
  */
 exports.main = async (event, context) => {
   try {
-    const { page = 1, pageSize = 10, filterType = 'all', ratingFilter = null } = event
+    const { page = 1, pageSize = 10, filterType = 'all', ratingFilter = null, searchKeyword = '' } = event
 
     console.log('云函数 getDiscoverList 被调用')
-    console.log('参数:', { page, pageSize, filterType, ratingFilter })
+    console.log('参数:', { page, pageSize, filterType, ratingFilter, searchKeyword })
 
     // 获取数据库引用
     const db = cloud.database()
@@ -39,8 +39,35 @@ exports.main = async (event, context) => {
       ])
     }
 
-    if (Object.keys(whereClause).length > 0) {
-      query = query.where(whereClause)
+    // 搜索关键词筛选（搜索豆名或品牌）
+    if (searchKeyword && searchKeyword.trim()) {
+      const keyword = searchKeyword.trim()
+      // 使用正则表达式进行模糊搜索（不区分大小写）
+      const regex = db.RegExp({
+        regexp: keyword,
+        options: 'i'
+      })
+      // 使用 or 条件查询豆名或品牌
+      const searchCondition = _.or([
+        { beanName: regex },
+        { brand: regex }
+      ])
+      
+      // 如果有其他筛选条件，使用 and 组合
+      if (Object.keys(whereClause).length > 0) {
+        query = query.where(_.and([
+          whereClause,
+          searchCondition
+        ]))
+      } else {
+        // 只有搜索条件
+        query = query.where(searchCondition)
+      }
+    } else {
+      // 没有搜索关键词时，使用原有的 where 条件
+      if (Object.keys(whereClause).length > 0) {
+        query = query.where(whereClause)
+      }
     }
 
     // 计算跳过的记录数

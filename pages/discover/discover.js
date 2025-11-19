@@ -1,5 +1,6 @@
 // pages/discover/discover.js
 // 发现页逻辑：展示所有用户发布的咖啡豆记录
+const auth = require('../../utils/auth.js')
 
 Page({
   /**
@@ -20,13 +21,52 @@ Page({
       { key: '4.0-4.4', label: '4.0-4.4' },
       { key: '3.0-3.9', label: '3.0-3.9' },
       { key: '1.0-2.9', label: '1.0-2.9' }
-    ]
+    ],
+    searchKeyword: '', // 搜索关键字
+    showLoginDialog: false, // 是否显示登录弹窗
+    isLoggingIn: false, // 是否正在登录
+    tempAvatarUrl: '', // 临时头像URL（用户选择后）
+    tempNickName: '' // 临时昵称（用户输入后）
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    // 检查用户是否已登录
+    // const app = getApp()
+    // let profile = null
+
+    // if (app && app.globalData.userProfile) {
+    //   profile = app.globalData.userProfile
+    // } else {
+    //   const cachedProfile = auth.getStoredProfile()
+    //   const cachedOpenId = auth.getStoredOpenId()
+    //   if (cachedProfile) {
+    //     profile = cachedProfile
+    //     if (app) {
+    //       app.globalData.userProfile = cachedProfile
+    //     }
+    //   }
+    //   if (cachedOpenId && app) {
+    //     app.globalData.openId = cachedOpenId
+    //   }
+    // }
+
+    // if (profile) {
+    //   // 已登录，继续加载数据
+    //   this.loadDiscoverListData()
+    // } else {
+    //   // 未登录，显示登录弹窗
+    //   this.setData({ showLoginDialog: true })
+    // }
+    this.loadDiscoverListData()
+  },
+  
+  /**
+   * 加载发现列表数据
+   */
+  loadDiscoverListData() {
     // 从本地存储读取上次的筛选状态
     const savedFilterType = wx.getStorageSync('discoverFilterType')
     const savedRatingFilter = wx.getStorageSync('discoverRatingFilter')
@@ -104,6 +144,23 @@ Page({
   },
 
   /**
+   * 搜索框输入事件
+   * - 更新关键字后重新加载数据
+   * - 使用 setData 的回调保证 loadDiscoverList 在数据更新后执行
+   */
+  onSearchInput(e) {
+    const keyword = e.detail.value || ''
+    this.setData({ 
+      searchKeyword: keyword.trim(),
+      page: 1,
+      hasMore: true,
+      discoverList: [] // 清空列表，重新加载
+    }, () => {
+      this.loadDiscoverList(true)
+    })
+  },
+
+  /**
    * 下拉刷新
    */
   onRefresh() {
@@ -152,6 +209,14 @@ Page({
     return `${year}-${month}-${day} ${hours}:${minutes}`
   },
 
+  formatPricePer100g(value) {
+    if (value === null || value === undefined) return ''
+    const num = Number(value)
+    if (!Number.isFinite(num) || num < 0) return ''
+    const formatted = num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)
+    return `¥${formatted}/100g`
+  },
+
   /**
    * 加载发现列表数据
    * @param {Boolean} reset - 是否重置列表
@@ -176,7 +241,8 @@ Page({
           page: page,
           pageSize: this.data.pageSize,
           filterType: this.data.filterType, // 传入筛选类型
-          ratingFilter: ratingRange
+          ratingFilter: ratingRange,
+          searchKeyword: this.data.searchKeyword || '' // 传入搜索关键词
         }
       })
 
@@ -200,6 +266,8 @@ Page({
           ? Number(item.rating).toFixed(1)
           : '0.0'
         
+        const displayPrice = this.formatPricePer100g(item.pricePer100g)
+
         return {
           _id: item._id, // 保存发布记录的 ID，用于详情页查询
           beanId: item.beanId,
@@ -215,7 +283,9 @@ Page({
           displayRating: ratingValue,
           publishTime: publishTime,
           userName: item.userName || '匿名用户',
-          userAvatar: item.userAvatar || ''
+          userAvatar: item.userAvatar || '',
+          pricePer100g: item.pricePer100g ?? null,
+          displayPrice: displayPrice
         }
       })
 
@@ -315,6 +385,139 @@ Page({
         })
       }
     })
+  },
+
+  /**
+   * 选择头像
+   * @param {Object} e - 事件对象，包含 avatarUrl
+   */
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail
+    console.log('用户选择头像:', avatarUrl)
+    this.setData({
+      tempAvatarUrl: avatarUrl
+    })
+  },
+
+  /**
+   * 昵称输入
+   * @param {Object} e - 事件对象
+   */
+  onNickNameInput(e) {
+    const nickName = e.detail.value
+    this.setData({
+      tempNickName: nickName
+    })
+  },
+
+  /**
+   * 昵称输入失焦（用户可能通过键盘选择昵称）
+   * @param {Object} e - 事件对象
+   */
+  onNickNameBlur(e) {
+    const nickName = e.detail.value
+    if (nickName) {
+      this.setData({
+        tempNickName: nickName
+      })
+    }
+  },
+
+  /**
+   * 关闭登录弹窗
+   */
+  closeLoginDialog() {
+    if (!this.data.isLoggingIn) {
+      // 如果未登录，不允许关闭弹窗
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+
+  /**
+   * 阻止事件冒泡（用于弹窗内部点击）
+   */
+  stopPropagation() {
+    // 空函数，用于阻止事件冒泡
+  },
+
+  /**
+   * 确认登录
+   */
+  async confirmLogin() {
+    if (this.data.isLoggingIn) return
+    
+    // 验证用户是否设置了头像和昵称
+    if (!this.data.tempAvatarUrl) {
+      wx.showToast({
+        title: '请选择头像',
+        icon: 'none'
+      })
+      return
+    }
+    
+    if (!this.data.tempNickName || !this.data.tempNickName.trim()) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none'
+      })
+      return
+    }
+
+    this.setData({ isLoggingIn: true })
+    
+    try {
+      // 获取 OpenID
+      const openId = await auth.callLoginFunction()
+      
+      // 构建用户信息
+      const profile = {
+        nickName: this.data.tempNickName.trim(),
+        avatarUrl: this.data.tempAvatarUrl
+      }
+      
+      console.log('=== 登录用户信息 ===')
+      console.log('profile:', profile)
+      console.log('openId:', openId)
+      console.log('==================')
+      
+      // 保存到本地存储
+      auth.saveProfile(profile, openId)
+      
+      // 保存到云数据库
+      await auth.saveUserToCloud(openId, profile)
+      
+      // 更新全局数据
+      const app = getApp()
+      if (app) {
+        app.globalData.userProfile = profile
+        app.globalData.openId = openId
+      }
+      
+      this.setData({
+        showLoginDialog: false,
+        tempAvatarUrl: '',
+        tempNickName: '',
+        isLoggingIn: false
+      })
+      
+      wx.showToast({
+        title: '登录成功',
+        icon: 'success'
+      })
+
+      // 登录成功后加载数据
+      this.loadDiscoverListData()
+    } catch (err) {
+      console.error('登录失败:', err)
+      this.setData({ isLoggingIn: false })
+      wx.showToast({
+        title: err.message || '登录失败，请重试',
+        icon: 'none'
+      })
+    }
   },
 
 })
