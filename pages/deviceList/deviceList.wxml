@@ -1,0 +1,66 @@
+<view class="page">
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{false}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
+
+  <view class="header">
+    <view class="title-group">
+      <view class="page-title">常用冲煮设备</view>
+      <view class="page-desc">管理你的手冲、意式、磨豆机等设备，记录更高效</view>
+    </view>
+    <button class="add-btn" bindtap="handleAddDevice">＋ 新建设备</button>
+  </view>
+
+  <block wx:for="{{groupedDevices}}" wx:key="key">
+    <view class="group" wx:if="{{item.devices.length}}">
+      <view class="group-title">{{item.label}}</view>
+      <view class="device-list">
+        <view
+          class="device-card"
+          wx:for="{{item.devices}}"
+          wx:for-item="device"
+          wx:key="id"
+          data-id="{{device.id}}"
+          data-type="{{device.type}}"
+          bindtap="handleEditDevice"
+        >
+          <view class="device-info">
+            <view class="name-row">
+              <text class="device-name">{{device.name}}</text>
+              <view class="default-tag" wx:if="{{device.isDefault}}">默认</view>
+            </view>
+            <view class="device-meta">
+              <text wx:if="{{device.brand}}">{{device.brand}}</text>
+              <text wx:if="{{device.brand && device.model}}"> · </text>
+              <text wx:if="{{device.model}}">{{device.model}}</text>
+            </view>
+            <view class="timestamp">更新于 {{device.displayTime}}</view>
+          </view>
+          <!-- <button
+            class="more-btn"
+            data-id="{{device.id}}"
+            data-type="{{device.type}}"
+            catchtap="openDeviceActions"
+          >···</button> -->
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:if="{{!loading && showEmpty}}">
+    <view class="empty-card">
+      <view class="empty-icon">☕</view>
+      <view class="empty-title">还没有添加设备</view>
+      <view class="empty-text">
+        可同步管理手冲壶、意式咖啡机、磨豆机等常用设备，录豆更顺手。
+      </view>
+      <button class="empty-btn" bindtap="handleAddDevice">立即添加</button>
+    </view>
+  </view>
+</view>
+

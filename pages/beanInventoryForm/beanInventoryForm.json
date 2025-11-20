@@ -1,6 +1,5 @@
 {
-  "navigationBarTitleText": "记录详情",
-  "disableScrollBounce": true,
+  "navigationBarTitleText": "新增库存",
   "usingComponents": {
     "login-dialog": "/components/loginDialog/loginDialog"
   }

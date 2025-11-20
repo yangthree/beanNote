@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "豆子库存管理",
+  "usingComponents": {
+    "login-dialog": "/components/loginDialog/loginDialog"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}
+

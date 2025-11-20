@@ -1,0 +1,84 @@
+.page {
+  min-height: 100vh;
+  background: #f9f7f5;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+.form-section {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 12rpx 24rpx rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.label {
+  font-size: 26rpx;
+  color: #7a6a58;
+}
+
+.input,
+.picker-value,
+.textarea {
+  background: #f7f2eb;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #3b2a1f;
+}
+
+.picker-item .picker-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.picker-value::after {
+  content: '›';
+  color: #c3b09a;
+}
+
+.textarea-item .textarea {
+  min-height: 180rpx;
+  line-height: 1.6;
+}
+
+.footer {
+  margin-top: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.primary-btn,
+.danger-btn {
+  border-radius: 999rpx;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  border: none;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #d6b58f, #c49b73);
+  color: #ffffff;
+}
+
+.primary-btn::after,
+.danger-btn::after {
+  border: none;
+}
+
+.danger-btn {
+  background: rgba(210, 60, 60, 0.08);
+  color: #d23c3c;
+}
+

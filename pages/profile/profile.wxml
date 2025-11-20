@@ -1,0 +1,63 @@
+<view class="page">
+  <view class="user-card">
+    <view class="avatar-wrapper">
+      <image
+        wx:if="{{userProfile && userProfile.avatarUrl}}"
+        class="avatar"
+        src="{{userProfile.avatarUrl}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="avatar placeholder">👤</view>
+    </view>
+    <view class="user-meta">
+      <view class="nickname">{{userProfile ? userProfile.nickName : '未登录用户'}}</view>
+      <view class="tips" wx:if="{{!userProfile}}">
+        登录后可同步设备、库存与记录
+      </view>
+    </view>
+    <button
+      class="login-btn"
+      size="mini"
+      bindtap="handleLogin"
+      wx:if="{{!userProfile}}"
+    >
+      微信授权登录
+    </button>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">常用功能</view>
+    <view class="entry-list">
+      <view
+        class="entry-item"
+        wx:for="{{entries}}"
+        wx:key="id"
+        data-path="{{item.path}}"
+        bindtap="onEntryTap"
+      >
+        <view class="entry-left">
+          <view class="entry-title">{{item.title}}</view>
+          <view class="entry-desc">{{item.desc}}</view>
+        </view>
+        <text class="entry-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card secondary">
+    <view class="section-title">提示</view>
+    <view class="tips-text">
+      登录后可管理常用设备、豆子库存，并在记录豆单时快捷选择。
+    </view>
+  </view>
+
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{false}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
+</view>
+

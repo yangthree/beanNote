@@ -75,9 +75,6 @@ Page({
     isPublishing: false,
     showLoginDialog: false,
     showPublishDialog: false, // 发布确认弹窗
-    isLoggingIn: false,
-    tempAvatarUrl: '', // 临时头像URL（用户选择后）
-    tempNickName: '', // 临时昵称（用户输入后）
     
     // 选项数据
     roastLevels: ROAST_LEVELS,
@@ -667,10 +664,24 @@ Page({
     this.setData({ showLoginDialog: true })
   },
 
-  closeLoginDialog() {
-    if (!this.data.isLoggingIn) {
-      this.setData({ showLoginDialog: false })
+  onLoginDialogClose() {
+    this.setData({ showLoginDialog: false })
+  },
+
+  onLoginSuccess(e) {
+    const { profile, openId } = e.detail || {}
+    if (!profile) return
+    const app = getApp()
+    if (app) {
+      app.globalData.userProfile = profile
+      if (openId) {
+        app.globalData.openId = openId
+      }
     }
+    this.setData({
+      userProfile: profile,
+      showLoginDialog: false
+    })
   },
 
   /**
@@ -697,9 +708,7 @@ Page({
           }
           this.setData({
             userProfile: null,
-            showLoginDialog: true,
-            tempAvatarUrl: '',
-            tempNickName: ''
+            showLoginDialog: true
           })
           wx.showToast({
             title: '已清除登录状态',
@@ -708,117 +717,6 @@ Page({
         }
       }
     })
-  },
-
-  /**
-   * 选择头像
-   * @param {Object} e - 事件对象，包含 avatarUrl
-   */
-  onChooseAvatar(e) {
-    const { avatarUrl } = e.detail
-    console.log('用户选择头像:', avatarUrl)
-    this.setData({
-      tempAvatarUrl: avatarUrl
-    })
-  },
-
-  /**
-   * 昵称输入
-   * @param {Object} e - 事件对象
-   */
-  onNickNameInput(e) {
-    const nickName = e.detail.value
-    this.setData({
-      tempNickName: nickName
-    })
-  },
-
-  /**
-   * 昵称输入失焦（用户可能通过键盘选择昵称）
-   * @param {Object} e - 事件对象
-   */
-  onNickNameBlur(e) {
-    const nickName = e.detail.value
-    if (nickName) {
-      this.setData({
-        tempNickName: nickName
-      })
-    }
-  },
-
-  /**
-   * 确认登录
-   */
-  async confirmLogin() {
-    if (this.data.isLoggingIn) return
-    
-    // 验证用户是否设置了头像和昵称
-    if (!this.data.tempAvatarUrl) {
-      wx.showToast({
-        title: '请选择头像',
-        icon: 'none'
-      })
-      return
-    }
-    
-    if (!this.data.tempNickName || !this.data.tempNickName.trim()) {
-      wx.showToast({
-        title: '请输入昵称',
-        icon: 'none'
-      })
-      return
-    }
-
-    this.setData({ isLoggingIn: true })
-    
-    try {
-      // 获取 OpenID
-      const openId = await auth.callLoginFunction()
-      
-      // 构建用户信息
-      const profile = {
-        nickName: this.data.tempNickName.trim(),
-        avatarUrl: this.data.tempAvatarUrl
-      }
-      
-      console.log('=== 登录用户信息 ===')
-      console.log('profile:', profile)
-      console.log('openId:', openId)
-      console.log('==================')
-      
-      // 保存到本地存储
-      auth.saveProfile(profile, openId)
-      
-      // 保存到云数据库
-      await auth.saveUserToCloud(openId, profile)
-      
-      // 更新全局数据
-      const app = getApp()
-      if (app) {
-        app.globalData.userProfile = profile
-        app.globalData.openId = openId
-      }
-      
-      this.setData({
-        userProfile: profile,
-        showLoginDialog: false,
-        tempAvatarUrl: '',
-        tempNickName: ''
-      })
-      
-      wx.showToast({
-        title: '登录成功',
-        icon: 'success'
-      })
-    } catch (err) {
-      console.error('登录失败:', err)
-      wx.showToast({
-        title: err.message || '登录失败，请重试',
-        icon: 'none'
-      })
-    } finally {
-      this.setData({ isLoggingIn: false })
-    }
   },
 
   /**

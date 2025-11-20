@@ -1,6 +1,5 @@
 {
-  "navigationBarTitleText": "记录详情",
-  "disableScrollBounce": true,
+  "navigationBarTitleText": "常用冲煮设备",
   "usingComponents": {
     "login-dialog": "/components/loginDialog/loginDialog"
   }

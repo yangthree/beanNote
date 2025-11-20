@@ -1,0 +1,93 @@
+<view class="page">
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{false}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
+
+  <view class="header">
+    <view class="title-group">
+      <view class="page-title">豆子库存管理</view>
+      <view class="page-desc">录入豆子、追踪剩余克数，快用完时自动提醒</view>
+    </view>
+    <button class="add-btn" bindtap="handleAddInventory">＋ 新增库存</button>
+  </view>
+
+  <view class="tabs">
+    <view
+      class="tab {{activeTab === item.key ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="handleTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="grid" wx:if="{{beans.length}}">
+    <view
+      class="bean-card"
+      wx:for="{{beans}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="handleCardTap"
+    >
+      <view class="bean-cover">
+        <text class="bean-icon">☕</text>
+      </view>
+      <view class="bean-info">
+        <view class="name-row">
+          <text class="bean-name">{{item.name || '未命名豆'}}</text>
+          <view class="status-tag" wx:if="{{item.statusLabel}}">{{item.statusLabel}}</view>
+        </view>
+        <view class="bean-meta">
+          <text wx:if="{{item.brand}}">{{item.brand}}</text>
+          <text wx:if="{{item.brand && item.roastLevel}}"> · </text>
+          <text wx:if="{{item.roastLevel}}">{{item.roastLevel}}</text>
+        </view>
+        <view class="weight-row">
+          <text class="weight-label">剩余：</text>
+          <text class="weight-value">{{item.currentWeight}}g</text>
+        </view>
+        <view class="progress">
+          <view class="progress-bar" style="width: {{item.progress}}%;"></view>
+        </view>
+        <view class="date-row">
+          <text>烘焙：{{item.roastDateText || '--'}}</text>
+          <text>开袋：{{item.openDateText || '--'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && beans.length === 0}}">
+    <view class="empty-card">
+      <view class="empty-icon">☕</view>
+      <view class="empty-title">还没有{{activeTab === 'in_stock' ? '在库' : '记录'}}</view>
+      <view class="empty-text">
+        新增库存后即可追踪豆子剩余量、烘焙日期与用量提醒。
+      </view>
+      <button class="empty-btn" bindtap="handleAddInventory">立即新增</button>
+    </view>
+  </view>
+
+  <view class="footer-stats" wx:if="{{!loading}}">
+    <view class="stat-item">
+      <view class="stat-value">{{stats.inStock}}</view>
+      <view class="stat-label">在库</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{stats.nearEmpty}}</view>
+      <view class="stat-label">即将用完</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{stats.finished}}</view>
+      <view class="stat-label">已用完</view>
+    </view>
+  </view>
+</view>
+

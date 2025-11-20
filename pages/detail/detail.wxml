@@ -28,9 +28,9 @@
 
 
   <!-- 测试用：清除登录状态按钮（开发阶段使用，上线前删除） -->
-  <!-- <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
+  <view class="clear-login-btn" bindtap="clearLogin" wx:if="{{userProfile}}">
     <text class="clear-login-text">清除登录</text>
-  </view> -->
+  </view>
 
   <!-- 内容区域滚动 -->
   <scroll-view class="scroll-area" scroll-y show-scrollbar="false" enhanced="true" bounces="false">
@@ -402,49 +402,14 @@
     </view>
   </scroll-view>
 
-  <!-- 登录提示弹窗：提醒用户授权微信信息 -->
-  <view class="login-mask" wx:if="{{showLoginDialog}}">
-    <view class="login-dialog">
-      <view class="login-title">请先登录</view>
-      <view class="login-desc">
-        为保障数据同步与发布功能，请设置您的头像和昵称。
-      </view>
-      
-      <!-- 用户信息设置区域 -->
-      <view class="user-info-form">
-        <!-- 头像选择 -->
-        <view class="avatar-section">
-          <text class="form-label">头像</text>
-          <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-            <view class="avatar-preview-wrapper">
-              <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"></image>
-              <view wx:else class="avatar-placeholder">
-                <text class="avatar-icon">👤</text>
-              </view>
-            </view>
-            <text class="avatar-text">点击选择头像</text>
-          </button>
-        </view>
-        
-        <!-- 昵称输入 -->
-        <view class="nickname-section">
-          <text class="form-label">昵称</text>
-          <input 
-            class="nickname-input" 
-            type="nickname" 
-            placeholder="请输入昵称"
-            value="{{tempNickName}}"
-            bindinput="onNickNameInput"
-            bindblur="onNickNameBlur"
-          />
-        </view>
-      </view>
-      
-      <view class="login-actions">
-        <button class="login-btn primary" hover-class="none" loading="{{isLoggingIn}}" bindtap="confirmLogin">确认登录</button>
-      </view>
-    </view>
-  </view>
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{true}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
 
   <!-- 发布确认弹窗 -->
   <view class="login-mask" wx:if="{{showPublishDialog}}" bindtap="closePublishDialog">

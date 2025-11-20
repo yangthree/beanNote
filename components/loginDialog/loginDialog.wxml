@@ -1,0 +1,42 @@
+<view class="login-mask" wx:if="{{show}}" bindtap="handleMaskTap">
+  <view class="login-dialog" catchtap="stopPropagation">
+    <view class="login-title">请先登录</view>
+    <view class="login-desc">请选择头像并填写昵称，以便同步记录。</view>
+
+    <view class="user-info-form">
+      <view class="avatar-section">
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <view class="avatar-preview-wrapper">
+            <image
+              wx:if="{{tempAvatarUrl}}"
+              class="avatar-preview"
+              src="{{tempAvatarUrl}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="avatar-placeholder">
+              <text class="avatar-icon">+</text>
+            </view>
+          </view>
+          <text class="avatar-text">{{tempAvatarUrl ? '重新选择' : '点击上传'}}</text>
+        </button>
+      </view>
+
+      <view class="nickname-section">
+        <text class="form-label">昵称</text>
+        <input
+          class="nickname-input"
+          type="nickname"
+          placeholder="请输入昵称"
+          value="{{tempNickName}}"
+          bindinput="onNickNameInput"
+          bindblur="onNickNameBlur"
+        />
+      </view>
+    </view>
+
+    <view class="login-actions">
+      <button class="login-btn primary" loading="{{isLoggingIn}}" bindtap="confirmLogin">确认登录</button>
+    </view>
+  </view>
+</view>
+

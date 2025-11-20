@@ -1,0 +1,155 @@
+.login-mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .login-dialog {
+    width: 80%;
+    background: #ffffff;
+    border-radius: 32rpx;
+    padding: 48rpx 40rpx;
+    box-shadow: 0 20rpx 50rpx rgba(0, 0, 0, 0.15);
+    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 整体左对齐 */
+  }
+  
+  .login-title {
+    font-size: 42rpx;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 22rpx;
+    text-align: left;
+  }
+  
+  .login-desc {
+    font-size: 26rpx;
+    color: #777777;
+    line-height: 1.5;
+    margin-bottom: 22rpx;
+    text-align: left;
+  }
+  
+  .user-info-form {
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+    width: 100%;
+    align-items: flex-start; /* 左对齐 */
+  }
+  .avatar-section {
+    display: flex;
+    flex-direction: row; /* 横向排列 */
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* ⭐ 关键：左对齐 */
+    width: 51%;
+  }
+    
+  .avatar-preview-wrapper {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: #f5f0e8;
+    border: 2rpx dashed #d6b58f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .avatar-preview {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d6b58f;
+    font-size: 32rpx;
+  }
+  
+  .avatar-text {
+    font-size: 26rpx;
+    color: #7a6a58;
+    text-align: left;
+  }
+  
+  .avatar-btn {
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    padding: 0;
+    background: none;
+    border: none;
+    justify-content: flex-start; /* 左对齐按钮内容 */
+  }
+  
+  .nickname-section {
+    display: flex;
+    flex-direction: row; /* label + input 横向排列 */
+    align-items: center;
+    gap: 16rpx;
+    width: 100%;
+  }
+  
+  .form-label {
+    font-size: 32rpx;
+    color: #333333;
+    font-weight: 600;
+    min-width: 80rpx;
+    text-align: left;
+  }
+  
+  .nickname-input {
+    flex: 1;
+    height: 78rpx;
+    padding: 0 16rpx;
+    border-radius: 20rpx;
+    border: 2rpx solid #e4d6c7;
+    background: #fff;
+    font-size: 28rpx;
+    color: #333333;
+  }
+  
+  .nickname-input:focus {
+    border-color: #d6b58f;
+  }
+  
+  .login-actions {
+    display: flex;
+    justify-content: flex-start; /* 登录按钮左对齐 */
+    width: 100%;
+    margin-top: 32rpx;
+  }
+  
+  .login-btn.primary {
+    width: 60%;
+    height: 88rpx;
+    line-height: 88rpx;
+    text-align: center;
+    background: linear-gradient(135deg, #d6b58f, #c2966d);
+    color: #ffffff;
+    border-radius: 44rpx;
+    border: none;
+    padding: 0;
+    font-size: 30rpx;
+    font-weight: 600;
+  }
+  
+  .login-btn.primary::after {
+    border: none;
+  }
+  

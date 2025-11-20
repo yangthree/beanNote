@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "库存详情",
+  "usingComponents": {
+    "login-dialog": "/components/loginDialog/loginDialog"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}
+

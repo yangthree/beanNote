@@ -2,6 +2,12 @@
   "pages": [
     "pages/index/index",
     "pages/discover/discover",
+    "pages/profile/profile",
+    "pages/deviceList/deviceList",
+    "pages/deviceForm/deviceForm",
+    "pages/beanInventory/beanInventory",
+    "pages/beanInventoryForm/beanInventoryForm",
+    "pages/beanInventoryDetail/beanInventoryDetail",
     "pages/detail/detail",
     "pages/beanDetail/beanDetail",
     "pages/batchUpload/batchUpload"
@@ -30,6 +36,12 @@
         "text": "发现",
         "iconPath": "assets/tab_discover_normal.png",
         "selectedIconPath": "assets/tab_discover_selected.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tab_profile_normal.png",
+        "selectedIconPath": "assets/tab_profile_selected.png"
       }
     ]
   },

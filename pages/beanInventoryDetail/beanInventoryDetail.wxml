@@ -1,0 +1,77 @@
+<view class="page">
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{false}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <scroll-view
+    wx:elif="{{bean}}"
+    scroll-y
+    class="content"
+    enable-flex="true"
+    enhanced
+    bounces="{{false}}"
+    show-scrollbar="{{false}}"
+  >
+    <view class="card hero-card">
+      <view class="header">
+        <view class="title-block">
+          <view class="bean-name">{{bean.name}}</view>
+          <view class="bean-brand" wx:if="{{bean.brand}}">{{bean.brand}}</view>
+        </view>
+        <button class="edit-btn" size="mini" bindtap="handleEdit">编辑</button>
+      </view>
+      <view class="status-tag">{{bean.statusLabel}}</view>
+      <view class="meta-row">
+        <text>{{bean.roastLevel}}</text>
+        <text wx:if="{{bean.origin}}"> · {{bean.origin}}</text>
+      </view>
+    </view>
+
+    <view class="card weight-card">
+      <view class="section-title">重量信息</view>
+      <view class="weight-values">
+        <view>
+          <view class="label">剩余量</view>
+          <view class="value">{{bean.currentWeight}}g / {{bean.totalWeight}}g</view>
+        </view>
+        <view>
+          <view class="label">进度</view>
+          <view class="value">{{bean.progress}}%</view>
+        </view>
+      </view>
+      <view class="progress">
+        <view class="progress-bar" style="width: {{bean.progress}}%;"></view>
+      </view>
+    </view>
+
+    <view class="card info-card">
+      <view class="section-title">日期信息</view>
+      <view class="info-row">
+        <text class="info-label">烘焙日期</text>
+        <text class="info-value">{{bean.roastDateText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">开袋日期</text>
+        <text class="info-value">{{bean.openDateText}}</text>
+      </view>
+    </view>
+
+    <view class="card info-card" wx:if="{{bean.notes}}">
+      <view class="section-title">我的笔记</view>
+      <view class="notes">{{bean.notes}}</view>
+    </view>
+
+    <view class="actions">
+      <button class="record-btn" bindtap="handleRecordConsume">记录消耗</button>
+      <button class="finish-btn" bindtap="handleMarkFinished">标记为已用完</button>
+    </view>
+  </scroll-view>
+</view>
+

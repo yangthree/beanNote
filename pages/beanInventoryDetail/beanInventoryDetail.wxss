@@ -1,0 +1,175 @@
+.page {
+  min-height: 100vh;
+  background: #f9f7f5;
+}
+
+.loading {
+  padding: 160rpx 0;
+  text-align: center;
+  color: #8a7c6a;
+}
+
+.content {
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 32rpx;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 12rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.hero-card {
+  background: linear-gradient(135deg, #fffaf5, #f2e4d3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.title-block {
+  max-width: 70%;
+}
+
+.bean-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #3b2a1f;
+}
+
+.bean-brand {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #7a6a58;
+}
+
+.edit-btn {
+  border-radius: 999rpx;
+  border: none;
+  padding: 6rpx 28rpx;
+  background: rgba(0, 0, 0, 0.08);
+  color: #3b2a1f;
+}
+
+.edit-btn::after {
+  border: none;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  background: #d6b58f;
+  color: #fff;
+  font-size: 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.meta-row {
+  font-size: 24rpx;
+  color: #7a6a58;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3b2a1f;
+  margin-bottom: 20rpx;
+}
+
+.weight-values {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.label {
+  font-size: 24rpx;
+  color: #8a7c6a;
+}
+
+.value {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #3b2a1f;
+}
+
+.progress {
+  width: 100%;
+  height: 16rpx;
+  background: #f0e5d9;
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #d6b58f, #c49b73);
+  border-radius: 999rpx;
+}
+
+.info-card .info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f2ebe2;
+}
+
+.info-card .info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: #8a7c6a;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #3b2a1f;
+}
+
+.notes {
+  font-size: 26rpx;
+  color: #4a3a2c;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 24rpx;
+}
+
+.record-btn,
+.finish-btn {
+  flex: 1;
+  border-radius: 999rpx;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  border: none;
+}
+
+.record-btn {
+  background: #d6b58f;
+  color: #fff;
+}
+
+.finish-btn {
+  background: #f0ebe5;
+  color: #7a6a58;
+}
+
+.record-btn::after,
+.finish-btn::after {
+  border: none;
+}
+

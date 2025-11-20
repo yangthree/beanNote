@@ -1,0 +1,108 @@
+.page {
+  min-height: 100vh;
+  background: #f9f7f5;
+  padding: 40rpx 32rpx 160rpx;
+  box-sizing: border-box;
+}
+
+.form-section {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.form-item.inline {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 26rpx;
+  color: #5a4332;
+  font-weight: 600;
+}
+
+.input,
+.picker-value {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 20rpx;
+  border: 2rpx solid #e4d6c7;
+  background: #fff;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #d6b58f;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  color: #333333;
+}
+
+.tips-card {
+  margin-top: 32rpx;
+  background: #f4efe9;
+  border-radius: 28rpx;
+  padding: 28rpx 32rpx;
+  color: #6c5a49;
+}
+
+.tips-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.tips-text {
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.footer {
+  margin-top: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.primary-btn,
+.danger-btn {
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  color: #fff;
+  border: none;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #d6b58f, #c69466);
+}
+
+.danger-btn {
+  background: #d96666;
+}
+
+.primary-btn::after,
+.danger-btn::after {
+  border: none;
+}
+

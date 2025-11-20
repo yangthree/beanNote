@@ -1,0 +1,124 @@
+<view class="page">
+  <login-dialog
+    show="{{showLoginDialog}}"
+    closable="{{false}}"
+    defaultAvatar="{{userProfile ? userProfile.avatarUrl : ''}}"
+    defaultNickName="{{userProfile ? userProfile.nickName : ''}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginDialogClose"
+  />
+
+  <view class="form-section">
+    <view class="form-item">
+      <view class="label">豆子名称 *</view>
+      <input
+        class="input"
+        placeholder="例如：耶加雪菲 花魁"
+        value="{{form.name}}"
+        data-field="name"
+        bindinput="onInputChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label">品牌</view>
+      <input
+        class="input"
+        placeholder="例如：BeanHouse"
+        value="{{form.brand}}"
+        data-field="brand"
+        bindinput="onInputChange"
+      />
+    </view>
+
+    <view class="form-item picker-item">
+      <view class="label">烘焙程度 *</view>
+      <picker
+        mode="selector"
+        range="{{roastOptions}}"
+        range-key="label"
+        value="{{roastIndex}}"
+        bindchange="onRoastChange"
+      >
+        <view class="picker-value">{{form.roastLevel}}</view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="label">产区</view>
+      <input
+        class="input"
+        placeholder="例如：埃塞俄比亚"
+        value="{{form.origin}}"
+        data-field="origin"
+        bindinput="onInputChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label">总重量（g） *</view>
+      <input
+        class="input"
+        type="number"
+        placeholder="例如：250"
+        value="{{form.totalWeight}}"
+        data-field="totalWeight"
+        bindinput="onInputChange"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label">剩余重量（g） *</view>
+      <input
+        class="input"
+        type="number"
+        placeholder="默认与总重量一致"
+        value="{{form.currentWeight}}"
+        data-field="currentWeight"
+        bindinput="onInputChange"
+      />
+    </view>
+
+    <view class="form-item picker-item">
+      <view class="label">烘焙日期 *</view>
+      <picker
+        mode="date"
+        value="{{form.roastDate}}"
+        bindchange="onDateChange"
+        data-field="roastDate"
+      >
+        <view class="picker-value">{{form.roastDate || '请选择日期'}}</view>
+      </picker>
+    </view>
+
+    <view class="form-item picker-item">
+      <view class="label">开袋日期</view>
+      <picker
+        mode="date"
+        value="{{form.openDate}}"
+        bindchange="onDateChange"
+        data-field="openDate"
+      >
+        <view class="picker-value">{{form.openDate || '可选'}}</view>
+      </picker>
+    </view>
+
+    <view class="form-item textarea-item">
+      <view class="label">备注</view>
+      <textarea
+        class="textarea"
+        placeholder="记录口感评价、风味特点等..."
+        value="{{form.notes}}"
+        data-field="notes"
+        bindinput="onInputChange"
+        maxlength="280"
+      />
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="danger-btn" wx:if="{{isEdit}}" bindtap="handleDelete">删除库存</button>
+    <button class="primary-btn" bindtap="handleSubmit">{{isEdit ? '保存修改' : '保存库存'}}</button>
+  </view>
+</view>
+
